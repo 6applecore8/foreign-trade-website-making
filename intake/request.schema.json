@@ -1,0 +1,330 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "request.schema.json",
+  "title": "Site Intake Request",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "project_id",
+    "industry",
+    "site_type",
+    "brand",
+    "target_audience",
+    "primary_goal",
+    "required_sections",
+    "freeform_request",
+    "faq",
+    "seo",
+    "references",
+    "project",
+    "business",
+    "website"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^req-[A-Za-z0-9._-]+$"
+    },
+    "submitted_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,48}$"
+    },
+    "industry": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "site_type": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "brand": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "target_audience": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "primary_goal": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "required_sections": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      }
+    },
+    "freeform_request": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        }
+      }
+    },
+    "business": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "industry"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "industry": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "target_audience": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "facts": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      }
+    },
+    "website": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primary_goal",
+        "requirements"
+      ],
+      "properties": {
+        "primary_goal": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "requirements": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "pages": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "style_notes": {
+          "type": "string",
+          "maxLength": 1000
+        }
+      }
+    },
+    "faq": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "items"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "industry-default",
+            "custom"
+          ]
+        },
+        "items": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "question",
+              "answer"
+            ],
+            "properties": {
+              "question": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "answer": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "source": {
+                "type": "string",
+                "enum": [
+                  "industry-template",
+                  "user-provided"
+                ]
+              },
+              "generation_note": {
+                "type": "string",
+                "maxLength": 500
+              }
+            }
+          }
+        }
+      }
+    },
+    "seo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "description",
+        "keywords",
+        "upload"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "keywords": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "maxLength": 40
+          }
+        },
+        "upload": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "field_name",
+                "original_name",
+                "size",
+                "media_type"
+              ],
+              "properties": {
+                "field_name": {
+                  "const": "seo_file"
+                },
+                "original_name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                "size": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2097152
+                },
+                "media_type": {
+                  "type": "string"
+                },
+                "stored_path": {
+                  "type": "string",
+                  "pattern": "^seo/source\\.(txt|csv|json)$"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "references": {
+      "type": "array",
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "client_id",
+          "field_name",
+          "purpose"
+        ],
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "field_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 140
+          },
+          "purpose": {
+            "enum": [
+              "hero",
+              "product-service",
+              "about",
+              "faq",
+              "background-style",
+              "custom"
+            ]
+          },
+          "notes": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "original_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 8388608
+          },
+          "media_type": {
+            "type": "string"
+          },
+          "stored_path": {
+            "type": "string",
+            "pattern": "^references/[A-Za-z0-9._-]+$"
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

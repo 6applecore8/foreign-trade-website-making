@@ -1,0 +1,12 @@
+{
+  "project_name": "coffee-demo",
+  "title": "城市咖啡馆",
+  "description": "一家适合工作日午后的社区咖啡馆。",
+  "keywords": [
+    "咖啡馆",
+    "手冲咖啡",
+    "社区空间"
+  ],
+  "language": "zh-CN",
+  "user_request": "制作一个简洁、温暖的咖啡馆介绍网站"
+}

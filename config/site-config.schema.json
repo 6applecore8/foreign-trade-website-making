@@ -1,0 +1,289 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Local Site Workflow Input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project_name",
+    "user_request"
+  ],
+  "$defs": {
+    "keywords": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "maxItems": 20
+        },
+        {
+          "type": "string",
+          "maxLength": 500
+        }
+      ]
+    },
+    "relativePath": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$"
+    }
+  },
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,48}$",
+      "description": "用于 artifact 标识的短名称"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 120,
+      "description": "legacy 顶层 SEO 标题；nested seo.title 优先"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 300,
+      "description": "legacy 顶层 SEO 描述；nested seo.description 优先"
+    },
+    "keywords": {
+      "$ref": "#/$defs/keywords",
+      "description": "legacy 顶层关键词；nested seo.keywords 优先"
+    },
+    "language": {
+      "type": "string",
+      "default": "zh-CN"
+    },
+    "user_request": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "intake": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request_id",
+        "request_path",
+        "source_request",
+        "submitted_at"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "pattern": "^req-[A-Za-z0-9._-]+$"
+        },
+        "request_path": {
+          "type": "string",
+          "pattern": "^intake/requests/req-[A-Za-z0-9._-]+$"
+        },
+        "source_request": {
+          "type": "string",
+          "pattern": "^intake/requests/req-[A-Za-z0-9._-]+/site-request\\.json$"
+        },
+        "submitted_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "website_intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "industry": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "site_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "brand_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "primary_goal": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "requirements": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "target_audience": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "maxItems": 5
+        },
+        "style_notes": {
+          "type": "string",
+          "maxLength": 1000
+        }
+      }
+    },
+    "reference_assets": {
+      "type": "array",
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "relative_path",
+          "original_name",
+          "verified_media_type",
+          "purpose",
+          "usage_note"
+        ],
+        "properties": {
+          "relative_path": {
+            "type": "string",
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$",
+            "description": "项目根目录相对 POSIX 路径；禁止绝对路径、反斜杠与 .."
+          },
+          "original_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "verified_media_type": {
+            "type": "string",
+            "enum": [
+              "image/png",
+              "image/jpeg",
+              "image/webp",
+              "image/gif"
+            ]
+          },
+          "purpose": {
+            "type": "string",
+            "enum": [
+              "hero",
+              "product-service",
+              "about",
+              "faq",
+              "background-style",
+              "custom"
+            ]
+          },
+          "usage_note": {
+            "type": "string",
+            "maxLength": 500
+          }
+        }
+      }
+    },
+    "faq": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "items"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "industry-default",
+            "custom"
+          ]
+        },
+        "items": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "question",
+              "answer"
+            ],
+            "properties": {
+              "question": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "answer": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "source": {
+                "type": "string",
+                "enum": [
+                  "industry-template",
+                  "user-provided"
+                ]
+              },
+              "generation_note": {
+                "type": "string",
+                "maxLength": 500
+              }
+            }
+          }
+        }
+      }
+    },
+    "seo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "keywords": {
+          "$ref": "#/$defs/keywords"
+        },
+        "source_document": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "relative_path",
+            "original_name",
+            "verified_media_type"
+          ],
+          "properties": {
+            "relative_path": {
+              "$ref": "#/$defs/relativePath"
+            },
+            "original_name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            "verified_media_type": {
+              "type": "string",
+              "enum": [
+                "text/plain",
+                "text/csv",
+                "application/csv",
+                "application/json"
+              ]
+            }
+          }
+        }
+      },
+      "description": "字段级优先级：本对象显式字段 > source_document 导入值 > legacy 顶层字段 > 生成默认值"
+    }
+  }
+}

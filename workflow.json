@@ -1,0 +1,174 @@
+{
+  "name": "site-workflow-mvp",
+  "version": "0.1.0",
+  "mode": "local-static-site",
+  "principle": "主 Agent 调度；每个 Subagent 只写入自己的目录；通过 JSON artifact 交接。",
+  "shared_input": "config/site-config.json",
+  "nodes": [
+    {
+      "id": "main-agent",
+      "type": "orchestrator",
+      "prompt": "main-agent/PROMPT.md",
+      "reads": [
+        "config/site-config.json",
+        "artifacts/*/"
+      ],
+      "writes": [
+        "config/site-config.json"
+      ]
+    },
+    {
+      "id": "requirements",
+      "type": "subagent",
+      "prompt": "subagents/01-requirements/PROMPT.md",
+      "reads": [
+        "config/site-config.json"
+      ],
+      "writes": [
+        "artifacts/01-requirements/requirements.json"
+      ]
+    },
+    {
+      "id": "metadata",
+      "type": "subagent",
+      "prompt": "subagents/02-metadata/PROMPT.md",
+      "reads": [
+        "config/site-config.json",
+        "artifacts/01-requirements/requirements.json"
+      ],
+      "writes": [
+        "artifacts/02-metadata/metadata.json"
+      ]
+    },
+    {
+      "id": "content",
+      "type": "subagent",
+      "prompt": "subagents/03-content/PROMPT.md",
+      "reads": [
+        "config/site-config.json",
+        "artifacts/01-requirements/requirements.json"
+      ],
+      "writes": [
+        "artifacts/03-content/home-content.json"
+      ]
+    },
+    {
+      "id": "implementation",
+      "type": "subagent",
+      "prompt": "subagents/04-implementation/PROMPT.md",
+      "reads": [
+        "config/site-config.json",
+        "artifacts/01-requirements/requirements.json",
+        "artifacts/02-metadata/metadata.json",
+        "artifacts/03-content/home-content.json"
+      ],
+      "writes": [
+        "artifacts/04-implementation/site/index.html",
+        "artifacts/04-implementation/site/styles.css",
+        "artifacts/04-implementation/site/site-spec.json"
+      ]
+    },
+    {
+      "id": "validation",
+      "type": "subagent",
+      "prompt": "subagents/05-validation/PROMPT.md",
+      "reads": [
+        "config/site-config.json",
+        "artifacts/02-metadata/metadata.json",
+        "artifacts/04-implementation/site/"
+      ],
+      "writes": [
+        "artifacts/05-validation/validation-report.json"
+      ]
+    }
+  ],
+  "edges": [
+    [
+      "main-agent",
+      "requirements"
+    ],
+    [
+      "main-agent",
+      "metadata"
+    ],
+    [
+      "main-agent",
+      "content"
+    ],
+    [
+      "requirements",
+      "metadata"
+    ],
+    [
+      "requirements",
+      "content"
+    ],
+    [
+      "requirements",
+      "implementation"
+    ],
+    [
+      "metadata",
+      "implementation"
+    ],
+    [
+      "content",
+      "implementation"
+    ],
+    [
+      "implementation",
+      "validation"
+    ],
+    [
+      "metadata",
+      "validation"
+    ],
+    [
+      "validation",
+      "main-agent"
+    ]
+  ],
+  "intake_contract": {
+    "kind": "local-pre-workflow-ui",
+    "is_agent_node": false,
+    "request_store": "intake/requests/<request_id>/",
+    "selection": "Main Agent imports one explicitly selected append-only request only after the existing archive gate is verified.",
+    "submission_effect": "Intake submission creates a request snapshot only; it never overwrites config/site-config.json.",
+    "conditional_read_scope": "The selected request files and config-declared reference/SEO source relative paths are read-only inputs; no intake path is writable by workflow nodes.",
+    "seo_precedence": [
+      "explicit nested seo field",
+      "imported user SEO source_document",
+      "legacy top-level field",
+      "generated default"
+    ]
+  },
+  "limits": {
+    "pages": 1,
+    "implementation_files": 3,
+    "no_external_dependencies": true,
+    "no_public_deployment": true,
+    "no_auto_repair_loop": true
+  },
+  "timeout_policy": {
+    "fixed_90_second_limit": false,
+    "policy": "不设置固定 90 秒硬超时；使用运行平台的默认超时或由调用方传入节点级超时。优先通过缩小任务范围、限制输出长度和拆分节点降低超时风险。",
+    "on_timeout": "返回 status=failed、node_id、reason 和 retry_hint；不得伪造成功结果。",
+    "recommended_output_limits": {
+      "requirements_sections_max": 5,
+      "content_sections_max": 4,
+      "content_items_per_section_max": 3,
+      "implementation_files_max": 3
+    }
+  },
+  "archive_policy": {
+    "required_before_new_config": true,
+    "command": "python scripts/archive_run.py <run-id> [--source-root <run-root>]",
+    "copies": [
+      "config/site-config.json",
+      "artifacts/**"
+    ],
+    "history": "append-only; archived runs must never be cleared, deleted, or overwritten",
+    "artifact_overwrite_gate": "Each artifacts Owner slot may be overwritten only after the prior run was archived successfully.",
+    "failure": "If archival fails, do not write a new config or overwrite any artifact Owner slot."
+  }
+}

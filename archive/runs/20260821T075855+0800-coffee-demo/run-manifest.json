@@ -1,0 +1,77 @@
+{
+  "source": "C:\\Users\\HP\\.hermes\\workspace\\foreign-trade-site-workflow-package\\site-workflow-mvp",
+  "timestamp": "2026-08-22T06:00:17+00:00",
+  "status": "failed",
+  "files": [
+    {
+      "path": "config/site-config.json",
+      "bytes": 320,
+      "sha256": "511647b90bc4ffd907db92e631612441eab4abba511dfdf0d0d0b1696d0381b2"
+    },
+    {
+      "path": "artifacts/01-requirements/INDEX.md",
+      "bytes": 131,
+      "sha256": "b0cc4e229369ccfa164f217a552517a680255fc6e7dfeae157bdf24d4d1fda1a"
+    },
+    {
+      "path": "artifacts/01-requirements/requirements.json",
+      "bytes": 1374,
+      "sha256": "1b7bbea199907ce5b86abbb8b70a0aff3aa1c89f59a26141855b798c8d2ad533"
+    },
+    {
+      "path": "artifacts/02-metadata/INDEX.md",
+      "bytes": 119,
+      "sha256": "2a7dfadc2b763ef91e45a46e5cfcd4badfe110a07fcdc2ace1c3f62e10a97141"
+    },
+    {
+      "path": "artifacts/02-metadata/metadata.json",
+      "bytes": 301,
+      "sha256": "237cd9e82857c20c31dbb815e9ae8f40ec2ce76abb0561c011d27785f08dacf3"
+    },
+    {
+      "path": "artifacts/03-content/home-content.json",
+      "bytes": 1795,
+      "sha256": "be982ca9e1c189e072035e3951c8cb91ce892a51969ef68cc1130cc80e479300"
+    },
+    {
+      "path": "artifacts/03-content/INDEX.md",
+      "bytes": 121,
+      "sha256": "4b3cad9a90df825cfccdc61932abfbc56d207f2c715992f87a27081d66cec332"
+    },
+    {
+      "path": "artifacts/04-implementation/INDEX.md",
+      "bytes": 421,
+      "sha256": "6eddb11b78cde0b07ece4961c1336a545785939a5f3e7c285ff6f97dc4fed42f"
+    },
+    {
+      "path": "artifacts/04-implementation/site/index.html",
+      "bytes": 2710,
+      "sha256": "b06c3d23280fa18a1892efce3b77787afa6c86dc1a8514b7b0f7c6ecb6228c7a"
+    },
+    {
+      "path": "artifacts/04-implementation/site/site-spec.json",
+      "bytes": 1052,
+      "sha256": "a35294a4c0453f299a97773f5b5370a538e1ed181b6083763335f4e5e393691d"
+    },
+    {
+      "path": "artifacts/04-implementation/site/styles.css",
+      "bytes": 2299,
+      "sha256": "f61c56a83c7e7997cd0e87b11c1c4347709797205bba0f5b6da7e688424d6b5e"
+    },
+    {
+      "path": "artifacts/05-validation/INDEX.md",
+      "bytes": 132,
+      "sha256": "0da67814767bd302c1431ed0ab747b98e221836ed8064317aee14299951bf18c"
+    },
+    {
+      "path": "artifacts/05-validation/validation-report.json",
+      "bytes": 2464,
+      "sha256": "da911141ec66353f28224a4a47ceae40e5632d77950b8745b2fff3e58e2a921d"
+    },
+    {
+      "path": "artifacts/INDEX.md",
+      "bytes": 625,
+      "sha256": "083b2704c753f05981dc5db1dfa840f39b06980529e7119557e79487a35f8193"
+    }
+  ]
+}

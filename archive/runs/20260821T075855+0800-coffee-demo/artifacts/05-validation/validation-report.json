@@ -1,0 +1,44 @@
+{
+  "node_id": "05-validation",
+  "status": "failed",
+  "checks": [
+    {
+      "name": "实现文件存在",
+      "status": "passed",
+      "detail": "site/ 目录恰好包含 index.html、styles.css、site-spec.json 共 3 个文件（无 INDEX.md，符合 root INDEX.md 豁免）"
+    },
+    {
+      "name": "HTML metadata 一致",
+      "status": "failed",
+      "detail": "<title> 恰 1 个='城市咖啡馆'；description meta 恰 1 个='一家适合工作日午后的社区咖啡馆。'；keywords meta 恰 1 个但内容='咖啡馆, 手冲咖啡, 社区空间'（逗号后含空格）≠ metadata.json keywords 逗号拼接串='咖啡馆,手冲咖啡,社区空间'，不满足『完全一致』"
+    },
+    {
+      "name": "样式表引用有效",
+      "status": "passed",
+      "detail": "HTML 含 <link rel=\"stylesheet\" href=\"styles.css\">（恰 1 处），styles.css 文件存在"
+    },
+    {
+      "name": "无失效本地引用",
+      "status": "passed",
+      "detail": "HTML 全部本地引用 ['styles.css', '#contact'] 指向的文件均存在（#contact 为页内锚点，由『单页范围与 CTA』检查验证其区块存在）；CSS 无失效 url() 引用"
+    },
+    {
+      "name": "无外部依赖",
+      "status": "passed",
+      "detail": "未发现 http(s) 外部 URL、CDN 痕迹（cdn/unpkg/jsdelivr/googleapis 等）、npm/React/Vue 等框架痕迹；HTML 无任何 <script> 标签；CSS 无 @import/外部 url()"
+    },
+    {
+      "name": "单页范围与 CTA",
+      "status": "passed",
+      "detail": "site/ 下仅 index.html 一个 HTML 页面；页面含 CTA <a class=\"cta-button\" href=\"#contact\">联系我们</a>，锚点目标区块 id=\"contact\" 真实存在（页内另有 id=\"drinks\"、id=\"space\"）"
+    }
+  ],
+  "errors": [
+    {
+      "type": "invalid_input",
+      "detail": "artifacts/04-implementation/site/index.html 的 <meta name=\"keywords\" content=\"咖啡馆, 手冲咖啡, 社区空间\"> 与 metadata.json keywords（数组 [\"咖啡馆\",\"手冲咖啡\",\"社区空间\"] 的逗号分隔串 \"咖啡馆,手冲咖啡,社区空间\"）不完全一致：逗号后多出空格",
+      "retry_hint": "请 04-implementation 将 index.html 的 keywords meta 内容改为 '咖啡馆,手冲咖啡,社区空间'（去除逗号后空格）后重新生成 site-spec.json 并重跑 05-validation"
+    }
+  ],
+  "site_dir": "artifacts/04-implementation/site"
+}

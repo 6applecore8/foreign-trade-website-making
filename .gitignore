@@ -6,6 +6,8 @@ __pycache__/
 # Test and local runtime state
 intake/tests/.tmp/
 intake/requests/
+rag-data/
+.env
 
 # OS and editor files
 .DS_Store

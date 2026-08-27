@@ -1,0 +1,128 @@
+{
+  "generated_at": "2026-08-26T16:39:47.250120+00:00",
+  "scope": "PostgreSQL/pgvector hybrid retrieval only; excludes external LLM generation",
+  "project_key": "perfume-e2e",
+  "ingest": {
+    "project_key": "perfume-e2e",
+    "document_id": 6,
+    "title": "AURELIA NO.7 香水独立站完整需求文档",
+    "content_sha256": "32ed58372fda1fe77347108034c9d6d45d73a5e7e217abcb9f60e27cc39c4cdd",
+    "raw_path": "C:\\Users\\HP\\.hermes\\workspace\\site-workflow-mvp\\rag-data\\raw\\32ed58372fda1fe77347108034c9d6d45d73a5e7e217abcb9f60e27cc39c4cdd\\perfume-requirements.md",
+    "digest_path": "C:\\Users\\HP\\.hermes\\workspace\\site-workflow-mvp\\rag-data\\digests\\32ed58372fda1fe77347108034c9d6d45d73a5e7e217abcb9f60e27cc39c4cdd.json",
+    "chunk_count": 12,
+    "status": "ingested"
+  },
+  "queries": 5,
+  "rounds_per_query": 20,
+  "measurements": 100,
+  "correct_top3": 5,
+  "correctness_rate": 1.0,
+  "latency_ms": {
+    "min": 41.864,
+    "mean": 68.035,
+    "p50": 68.293,
+    "p95": 94.132,
+    "max": 95.9
+  },
+  "cases": [
+    {
+      "query": "香水品牌名称和定位是什么？",
+      "expected_all": [
+        "AURELIA NO.7",
+        "现代法式香氛"
+      ],
+      "matched": [
+        "AURELIA NO.7",
+        "现代法式香氛"
+      ],
+      "correct_top3": true,
+      "selected_layer": "raw_evidence",
+      "top_sources": [
+        "perfume-requirements.md#L7-L9",
+        "perfume-requirements.md#L3-L3",
+        "perfume-requirements.md#L53-L55"
+      ],
+      "sample_retrieval_ms": 44.523
+    },
+    {
+      "query": "这个独立站的目标用户是谁？",
+      "expected_all": [
+        "24–38",
+        "一二线城市"
+      ],
+      "matched": [
+        "24–38",
+        "一二线城市"
+      ],
+      "correct_top3": true,
+      "selected_layer": "raw_evidence",
+      "top_sources": [
+        "perfume-requirements.md#L13-L15",
+        "perfume-requirements.md#L53-L55",
+        "perfume-requirements.md#L7-L9"
+      ],
+      "sample_retrieval_ms": 50.304
+    },
+    {
+      "query": "独立站需要建设哪些页面？",
+      "expected_all": [
+        "女士香水",
+        "中性香水",
+        "香调指南"
+      ],
+      "matched": [
+        "女士香水",
+        "中性香水",
+        "香调指南"
+      ],
+      "correct_top3": true,
+      "selected_layer": "raw_evidence",
+      "top_sources": [
+        "perfume-requirements.md#L59-L61",
+        "perfume-requirements.md#L19-L21",
+        "perfume-requirements.md#L13-L15"
+      ],
+      "sample_retrieval_ms": 94.132
+    },
+    {
+      "query": "第一阶段支持购物车、在线下单和支付吗？",
+      "expected_all": [
+        "不提供购物车",
+        "不提供在线支付"
+      ],
+      "matched": [
+        "不提供购物车",
+        "不提供在线支付"
+      ],
+      "correct_top3": true,
+      "selected_layer": "raw_evidence",
+      "top_sources": [
+        "perfume-requirements.md#L7-L9",
+        "perfume-requirements.md#L71-L73",
+        "perfume-requirements.md#L3-L3"
+      ],
+      "sample_retrieval_ms": 78.324
+    },
+    {
+      "query": "FAQ需要覆盖哪些问题？",
+      "expected_all": [
+        "留香",
+        "试香",
+        "退换"
+      ],
+      "matched": [
+        "留香",
+        "试香",
+        "退换"
+      ],
+      "correct_top3": true,
+      "selected_layer": "raw_evidence",
+      "top_sources": [
+        "perfume-requirements.md#L33-L37",
+        "perfume-requirements.md#L53-L55",
+        "perfume-requirements.md#L65-L67"
+      ],
+      "sample_retrieval_ms": 60.601
+    }
+  ]
+}

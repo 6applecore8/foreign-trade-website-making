@@ -1,0 +1,197 @@
+{
+  "console_errors": [],
+  "cta": true,
+  "document": {
+    "client_width": 1425,
+    "scroll_height": 1130,
+    "scroll_width": 1425
+  },
+  "dom": {
+    "active_category": "looks.html",
+    "category_links": [
+      {
+        "href": "shoes.html",
+        "text": ""
+      },
+      {
+        "href": "apparel.html",
+        "text": ""
+      },
+      {
+        "href": "looks.html",
+        "text": ""
+      }
+    ],
+    "current_descriptions": [
+      "米白针织、黑色长裤与灰色鞋履构成柔和但清晰的通勤概念组合。",
+      "黑色外层包围暖橙内搭，以米白长裤平衡色彩，形成醒目的城市造型。",
+      "暖橙上装与深灰长裤建立强弱对比，鞋履和小包延续轻量日常方向。",
+      "黑、米白和暖灰分层组合，加入橙色帽款作为小面积视觉落点。",
+      "米白外套搭配暖橙长裤和深色内层，呈现轻快但稳定的完整造型概念。"
+    ],
+    "current_titles": [
+      "CALM ROUTE 01",
+      "ORANGE CORE 02",
+      "WARM SIGNAL 03",
+      "BLOCK DAY 04",
+      "LIGHT SHIFT 05"
+    ],
+    "route_checks": {
+      "home_to_shoes": true,
+      "shoes": {
+        "url": "http://127.0.0.1:4181/shoes.html",
+        "cards": 5,
+        "columns": "250.375px 250.375px 250.385px 250.375px 250.385px",
+        "all_images_loaded": true
+      },
+      "apparel": {
+        "url": "http://127.0.0.1:4181/apparel.html",
+        "cards": 5,
+        "columns": "250.375px 250.375px 250.385px 250.375px 250.385px",
+        "all_images_loaded": true
+      },
+      "looks": {
+        "url": "http://127.0.0.1:4181/looks.html",
+        "cards": 5,
+        "columns": "250.375px 250.375px 250.385px 250.375px 250.385px",
+        "all_images_loaded": true
+      }
+    }
+  },
+  "headings": [
+    {
+      "bounds": {
+        "bottom": 376.9271087646485,
+        "height": 88.69792175292969,
+        "left": 57.59375,
+        "right": 925.4791870117188,
+        "top": 288.22918701171875,
+        "width": 867.8854370117188
+      },
+      "container": {
+        "bottom": 376.9270935058594,
+        "height": 124.84375,
+        "left": 57.59375,
+        "right": 925.4791870117188,
+        "top": 252.08334350585935,
+        "width": 867.8854370117188
+      },
+      "id": "catalog-title",
+      "lines": [],
+      "text": "穿搭系列"
+    },
+    {
+      "bounds": {
+        "bottom": 773.6875,
+        "height": 19.8125,
+        "left": 72.65625,
+        "right": 292.90625,
+        "top": 753.875,
+        "width": 220.25
+      },
+      "container": {
+        "bottom": 840.1458435058594,
+        "height": 128.05209350585938,
+        "left": 58.26041793823242,
+        "right": 307.3020896911621,
+        "top": 712.09375,
+        "width": 249.0416717529297
+      },
+      "id": "heading-2",
+      "lines": [],
+      "text": "CALM ROUTE 01"
+    },
+    {
+      "bounds": {
+        "bottom": 773.6875,
+        "height": 19.8125,
+        "left": 337.4270935058594,
+        "right": 557.6770935058594,
+        "top": 753.875,
+        "width": 220.25
+      },
+      "container": {
+        "bottom": 840.1458435058594,
+        "height": 128.05209350585938,
+        "left": 323.03125,
+        "right": 572.0729217529297,
+        "top": 712.09375,
+        "width": 249.0416717529297
+      },
+      "id": "heading-3",
+      "lines": [],
+      "text": "ORANGE CORE 02"
+    },
+    {
+      "bounds": {
+        "bottom": 773.6979370117188,
+        "height": 19.8125,
+        "left": 602.1979370117188,
+        "right": 822.4583587646484,
+        "top": 753.8854370117188,
+        "width": 220.2604217529297
+      },
+      "container": {
+        "bottom": 840.1562805175781,
+        "height": 128.05209350585938,
+        "left": 587.8021240234375,
+        "right": 836.8542175292969,
+        "top": 712.1041870117188,
+        "width": 249.05209350585935
+      },
+      "id": "heading-4",
+      "lines": [],
+      "text": "WARM SIGNAL 03"
+    },
+    {
+      "bounds": {
+        "bottom": 773.6875,
+        "height": 19.8125,
+        "left": 866.9791870117188,
+        "right": 1087.2291870117188,
+        "top": 753.875,
+        "width": 220.25
+      },
+      "container": {
+        "bottom": 840.1458435058594,
+        "height": 128.05209350585938,
+        "left": 852.5833740234375,
+        "right": 1101.6250457763672,
+        "top": 712.09375,
+        "width": 249.0416717529297
+      },
+      "id": "heading-5",
+      "lines": [],
+      "text": "BLOCK DAY 04"
+    },
+    {
+      "bounds": {
+        "bottom": 773.6979370117188,
+        "height": 19.8125,
+        "left": 1131.75,
+        "right": 1352.0104217529297,
+        "top": 753.8854370117188,
+        "width": 220.2604217529297
+      },
+      "container": {
+        "bottom": 840.1562805175781,
+        "height": 128.05209350585938,
+        "left": 1117.354248046875,
+        "right": 1366.4063415527344,
+        "top": 712.1041870117188,
+        "width": 249.05209350585935
+      },
+      "id": "heading-6",
+      "lines": [],
+      "text": "LIGHT SHIFT 05"
+    }
+  ],
+  "overflow": false,
+  "url": "http://127.0.0.1:4181/looks.html",
+  "viewport": {
+    "height": 900,
+    "width": 1440
+  },
+  "screenshot_path": "runs/nova-category-pages-desktop-20260826/artifacts/looks-five-column-1440x900.png",
+  "screenshot_sha256": "3e588c3f8750ee48e8697437ab7516ef4b8399fa7dd451d26479197c4aa46c5c"
+}

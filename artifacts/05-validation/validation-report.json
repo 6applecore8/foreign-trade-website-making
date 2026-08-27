@@ -5,41 +5,60 @@
     {
       "name": "实现文件存在",
       "status": "passed",
-      "detail": "site/ 文件恰好为 index.html, site-spec.json, styles.css；5 个规定输入均存在；config、metadata、site-spec JSON 均可解析。当前三份实现文件均存在，SHA-256 分别为 index.html=57bbfe3daec4cfa3e7f7289209d1b5d8b73e07cca45246c8b2c5a4e202f90665、styles.css=852c3669e222377c094cb2171b60e409e5b5d469066bc0b2df62027e25c02c41、site-spec.json=8e3cdb87c3e04a046bc528fd38b7c4f861001cf7f907d13f13639ed44940df02。"
+      "detail": "site/ 下恰好存在 4 个 HTML、styles.css、site-spec.json 与 6 张本地图片，共 12 个声明文件。"
+    },
+    {
+      "name": "Schema",
+      "status": "passed",
+      "detail": "config/site-config.json 通过 config/site-config.schema.json 的 Draft 2020-12 校验。"
     },
     {
       "name": "HTML metadata 一致",
       "status": "passed",
-      "detail": "HTML 可由 html.parser 解析；h1=1；title/description/keywords/lang 均唯一且与 metadata 完全一致；keywords='鞋服独立站,运动鞋,潮流服饰,都市穿搭,鞋履品牌'；metadata 与 config、site-spec 同步。"
+      "detail": "首页 metadata 与 artifacts/02-metadata/metadata.json 完全一致；三个分类页具有各自的 title、description 与 keywords。"
     },
     {
-      "name": "样式表引用有效",
+      "name": "本地引用与外部依赖",
       "status": "passed",
-      "detail": "检测到唯一 stylesheet href=['styles.css']，目标 styles.css 存在。局部 CSS 复核确认 .concept-grid 基础规则包含 margin: 4rem 0 0，且已不含 calc(35% + 2rem)。"
+      "detail": "四个页面的 HTML/CSS/图片引用均有效，不存在远程 URL、CDN 或脚本依赖。"
     },
     {
-      "name": "无失效本地引用",
+      "name": "四页面与商品数据",
       "status": "passed",
-      "detail": "核验 3 个 href/src（styles.css、#main-content、#categories），所有本地文件与片段目标均存在，无死锚点。"
+      "detail": "index.html、shoes.html、apparel.html、looks.html 均存在；三个分类页分别与 home-content.json 的 catalog 标题、介绍和 5 个商品完全匹配。"
     },
     {
-      "name": "无外部依赖",
+      "name": "分类反例",
       "status": "passed",
-      "detail": "未发现外部 URL/CDN、script/JS、框架痕迹、CSS url()、图片或其他媒体依赖；HTML 中 script 元素为 0。"
+      "detail": "自动测试确认任一分类页删减为 4 个商品时，确定性验证会失败。"
     },
     {
-      "name": "单页范围与 CTA",
+      "name": "FAQ 保真",
       "status": "passed",
-      "detail": "单页仅 index.html；site-spec files 与三文件 MVP 一致；CTA href=#categories 且目标存在；页面明确声明 NOVA STEP 为虚构概念品牌、不代表真实企业；未检出被禁止的价格/销量/评价/库存/真实材质/认证/真实联系方式/地址/品牌历史；具备 header/main/section/footer、有效 skip link 与 aria-labelledby、viewport；CSS 具备响应式断点、:focus-visible、prefers-reduced-motion。"
+      "detail": "3 组问题与答案按 config/site-config.json 顺序呈现，且第三项明确说明三个独立分类页面。"
+    },
+    {
+      "name": "桌面五列布局",
+      "status": "passed",
+      "detail": "1440×900 下三个分类页均为 5 列，每列约 250px；每页 5 张图片全部加载，标题与介绍均存在。"
+    },
+    {
+      "name": "导航与交互",
+      "status": "passed",
+      "detail": "首页商品分类下拉菜单可导航到 shoes.html；分类页下拉菜单可继续切换 apparel.html 与 looks.html，并提供返回首页入口。"
+    },
+    {
+      "name": "浏览器布局证据",
+      "status": "passed",
+      "detail": "document scrollWidth=clientWidth=1425；无横向溢出；标题未越出容器；控制台错误与警告为空。"
+    },
+    {
+      "name": "截图证据",
+      "status": "passed",
+      "detail": "runs/nova-category-pages-desktop-20260826/artifacts/looks-five-column-1440x900.png；SHA-256 3e588c3f8750ee48e8697437ab7516ef4b8399fa7dd451d26479197c4aa46c5c。"
     }
   ],
   "errors": [],
   "site_dir": "artifacts/04-implementation/site",
-  "validated_at": "2026-08-22T21:09:27+08:00",
-  "validation_scope": "仅针对本次单一 CSS 桌面布局修改做局部静态复核；未做移动端验证，未运行 Wiki/安全/全量测试。",
-  "desktop_evidence": {
-    "source": "Main Agent 已提供的桌面 DOM 几何与 Computer Use 证据",
-    "geometry": "2560px 桌面宽度下，categories、style-idea、contact 三个 .concept-grid 的 gridOffsetRatio 均由旧值 0.3632 变为 0。",
-    "computer_use": "真实 Edge 截图复核中，首张 contact 卡片文字 x 从 999 变为 135；三张卡片均匀覆盖整行，无重叠、裁切或布局破坏。"
-  }
+  "browser_evidence": "runs/nova-category-pages-desktop-20260826/artifacts/browser-evidence.json"
 }

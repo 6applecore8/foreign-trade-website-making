@@ -2,7 +2,7 @@
 
 本目录存放 Main Agent 的只读工作流合同测试，用于在不改写项目输入、产物或活动配置的前提下验证兼容性约束。
 
-`test_intake_compatibility_gate.py` 验证：兼容性门禁在归档门禁前以 fail-closed 方式执行；必须显式选择规范的 `intake/requests/<request_id>`；当前请求通过、旧版或 `latest` 请求被拒绝；请求与生成配置满足 JSON Schema、身份和路径一致性；声明文件满足范围、大小、媒体签名及 UTF-8 约束；同时固定工作流图、活动配置哈希、单页及三个实现文件限制。
+`test_intake_compatibility_gate.py` 验证：兼容性门禁在归档门禁前以 fail-closed 方式执行；必须显式选择规范的 `intake/requests/<request_id>`；当前请求通过、旧版或 `latest` 请求被拒绝；请求与生成配置满足 JSON Schema、身份和路径一致性；同时固定工作流图、活动配置哈希、四页面及十二个实现文件限制。
 
 只读运行命令（从项目根目录执行）：
 

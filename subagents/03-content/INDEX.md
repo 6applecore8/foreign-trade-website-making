@@ -1,7 +1,7 @@
 # INDEX — 03-content
 
 ## 单一职责
-生成单页首页所需的短内容结构，不写 HTML/CSS，不设计额外页面。
+生成首页与三个商品分类页所需的短内容结构，不写 HTML/CSS，不设计额外页面。
 
 ## 输入
 - `config/site-config.json`
@@ -15,4 +15,4 @@
 
 ## FAQ 扩展
 
-消费 `faq.mode/items`：custom 严格保序且未知答案为 `待补充`；industry-default 使用 `website_intent.industry` 选择离线行业通用主题，不是同行/竞品或外部研究。`brand_name`/`site_type` 仅约束称谓与单页内容范围，不可补写真实历史、资质或业绩。
+消费 `faq.mode/items`：custom 严格保序且未知答案为 `待补充`；industry-default 使用 `website_intent.industry` 选择离线行业通用主题。`brand_name`/`site_type` 仅约束称谓与四页面内容范围，不可补写真实历史、资质或业绩。

@@ -12,7 +12,7 @@
 `artifacts/05-validation/validation-report.json`
 
 ## 检查项
-文件存在、HTML metadata、CSS 引用、明显的本地引用错误、范围是否仍为单页、外部依赖是否被引入。
+文件存在、HTML metadata、CSS 引用、本地引用错误、范围是否为声明的四页面、每个分类页是否恰好五个商品卡、外部依赖是否被引入。
 
 ## 可写目录
 仅允许写入 `artifacts/05-validation/`。

@@ -1,0 +1,200 @@
+{
+  "console_errors": [],
+  "cta": true,
+  "document": {
+    "client_width": 1425,
+    "scroll_height": 4193,
+    "scroll_width": 1425
+  },
+  "dom": {
+    "category_links": [
+      "鞋履",
+      "服装",
+      "穿搭系列"
+    ],
+    "faq_items": 3,
+    "navigation_links": [
+      "热销产品",
+      "公司介绍",
+      "常见问题",
+      "联系"
+    ],
+    "product_cards": 3,
+    "product_images": [
+      {
+        "loaded": true,
+        "natural_height": 1254,
+        "natural_width": 1254,
+        "src": "product-footwear.png"
+      },
+      {
+        "loaded": true,
+        "natural_height": 1254,
+        "natural_width": 1254,
+        "src": "product-apparel.png"
+      },
+      {
+        "loaded": true,
+        "natural_height": 1024,
+        "natural_width": 1536,
+        "src": "hero-campaign.png"
+      }
+    ],
+    "section_ids": [
+      "top",
+      "hot-products",
+      "about",
+      "faq",
+      "contact"
+    ]
+  },
+  "headings": [
+    {
+      "bounds": {
+        "bottom": 402.4166717529297,
+        "height": 146.75,
+        "left": 57.59375,
+        "right": 540.7604370117188,
+        "top": 255.6666717529297,
+        "width": 483.1666870117187
+      },
+      "container": {
+        "bottom": 809.9896036982536,
+        "height": 809.7291870117188,
+        "left": 0,
+        "right": 598.3541870117188,
+        "top": 0.2604166865348816,
+        "width": 598.3541870117188
+      },
+      "id": "hero-title",
+      "lines": [
+        {
+          "bottom": 329.0416717529297,
+          "height": 73.375,
+          "left": 57.59375,
+          "right": 540.7604370117188,
+          "top": 255.6666717529297,
+          "width": 483.1666870117187
+        },
+        {
+          "bottom": 402.4166870117187,
+          "height": 73.375,
+          "left": 57.59375,
+          "right": 540.7604370117188,
+          "top": 329.04168701171875,
+          "width": 483.1666870117187
+        }
+      ],
+      "text": "NOVA STEP\n迈入城市日常"
+    },
+    {
+      "bounds": {
+        "bottom": 1052.21875,
+        "height": 80.78125,
+        "left": 57.59375,
+        "right": 865.2604370117188,
+        "top": 971.4375,
+        "width": 807.6666870117188
+      },
+      "container": {
+        "bottom": 1052.2187728881836,
+        "height": 126.36458587646484,
+        "left": 57.59375,
+        "right": 865.2604370117188,
+        "top": 925.8541870117188,
+        "width": 807.6666870117188
+      },
+      "id": "products-title",
+      "lines": [],
+      "text": "热销产品介绍"
+    },
+    {
+      "bounds": {
+        "bottom": 2434.2396697998047,
+        "height": 176.2291717529297,
+        "left": 57.59375,
+        "right": 654.0729370117188,
+        "top": 2258.010498046875,
+        "width": 596.4791870117188
+      },
+      "container": {
+        "bottom": 2535.03125,
+        "height": 752,
+        "left": 0,
+        "right": 712.3333740234375,
+        "top": 1783.03125,
+        "width": 712.3333740234375
+      },
+      "id": "about-title",
+      "lines": [
+        {
+          "bottom": 2346.12508392334,
+          "height": 88.11458587646484,
+          "left": 57.59375,
+          "right": 654.0729370117188,
+          "top": 2258.010498046875,
+          "width": 596.4791870117188
+        },
+        {
+          "bottom": 2434.239585876465,
+          "height": 88.11458587646484,
+          "left": 57.59375,
+          "right": 654.0729370117188,
+          "top": 2346.125,
+          "width": 596.4791870117188
+        }
+      ],
+      "text": "公司\n介绍"
+    },
+    {
+      "bounds": {
+        "bottom": 2776.59375,
+        "height": 80.78125,
+        "left": 57.59375,
+        "right": 865.2604370117188,
+        "top": 2695.8125,
+        "width": 807.6666870117188
+      },
+      "container": {
+        "bottom": 2776.59383392334,
+        "height": 126.36458587646484,
+        "left": 57.59375,
+        "right": 865.2604370117188,
+        "top": 2650.229248046875,
+        "width": 807.6666870117188
+      },
+      "id": "faq-title",
+      "lines": [],
+      "text": "常见问题"
+    },
+    {
+      "bounds": {
+        "bottom": 3602.260498046875,
+        "height": 80.78125,
+        "left": 418.6666870117187,
+        "right": 1367.0729370117188,
+        "top": 3521.479248046875,
+        "width": 948.40625
+      },
+      "container": {
+        "bottom": 3848.8959350585938,
+        "height": 367.4166870117187,
+        "left": 418.6666870117187,
+        "right": 1367.0729370117188,
+        "top": 3481.479248046875,
+        "width": 948.40625
+      },
+      "id": "contact-title",
+      "lines": [],
+      "text": "联系引导"
+    }
+  ],
+  "overflow": false,
+  "url": "http://127.0.0.1:4181/#top",
+  "viewport": {
+    "height": 900,
+    "width": 1440
+  },
+  "screenshot_path": "runs/nova-complete-desktop-20260826/artifacts/desktop-1440x900.png",
+  "screenshot_sha256": "20c06e471e3fc8ce3b03e197a6675f9421a7598332f30287f56760f2feecfb64"
+}

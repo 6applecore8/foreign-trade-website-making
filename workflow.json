@@ -21,6 +21,7 @@
       "id": "requirements",
       "type": "subagent",
       "prompt": "subagents/01-requirements/PROMPT.md",
+      "prompt_version": "1.0.0",
       "reads": [
         "config/site-config.json"
       ],
@@ -32,6 +33,7 @@
       "id": "metadata",
       "type": "subagent",
       "prompt": "subagents/02-metadata/PROMPT.md",
+      "prompt_version": "1.0.0",
       "reads": [
         "config/site-config.json",
         "artifacts/01-requirements/requirements.json"
@@ -44,6 +46,7 @@
       "id": "content",
       "type": "subagent",
       "prompt": "subagents/03-content/PROMPT.md",
+      "prompt_version": "1.0.0",
       "reads": [
         "config/site-config.json",
         "artifacts/01-requirements/requirements.json"
@@ -56,6 +59,7 @@
       "id": "implementation",
       "type": "subagent",
       "prompt": "subagents/04-implementation/PROMPT.md",
+      "prompt_version": "1.0.0",
       "reads": [
         "config/site-config.json",
         "artifacts/01-requirements/requirements.json",
@@ -64,17 +68,29 @@
       ],
       "writes": [
         "artifacts/04-implementation/site/index.html",
+        "artifacts/04-implementation/site/shoes.html",
+        "artifacts/04-implementation/site/apparel.html",
+        "artifacts/04-implementation/site/looks.html",
         "artifacts/04-implementation/site/styles.css",
-        "artifacts/04-implementation/site/site-spec.json"
+        "artifacts/04-implementation/site/site-spec.json",
+        "artifacts/04-implementation/site/hero-campaign.png",
+        "artifacts/04-implementation/site/product-footwear.png",
+        "artifacts/04-implementation/site/product-apparel.png",
+        "artifacts/04-implementation/site/catalog-shoes.png",
+        "artifacts/04-implementation/site/catalog-apparel.png",
+        "artifacts/04-implementation/site/catalog-looks.png"
       ]
     },
     {
       "id": "validation",
       "type": "subagent",
       "prompt": "subagents/05-validation/PROMPT.md",
+      "prompt_version": "2.0.0",
       "reads": [
         "config/site-config.json",
+        "artifacts/01-requirements/requirements.json",
         "artifacts/02-metadata/metadata.json",
+        "artifacts/03-content/home-content.json",
         "artifacts/04-implementation/site/"
       ],
       "writes": [
@@ -124,6 +140,14 @@
       "validation"
     ],
     [
+      "requirements",
+      "validation"
+    ],
+    [
+      "content",
+      "validation"
+    ],
+    [
       "validation",
       "main-agent"
     ]
@@ -143,8 +167,8 @@
     ]
   },
   "limits": {
-    "pages": 1,
-    "implementation_files": 3,
+    "pages": 4,
+    "implementation_files": 12,
     "no_external_dependencies": true,
     "no_public_deployment": true,
     "no_auto_repair_loop": true
@@ -157,7 +181,7 @@
       "requirements_sections_max": 5,
       "content_sections_max": 4,
       "content_items_per_section_max": 3,
-      "implementation_files_max": 3
+      "implementation_files_max": 12
     }
   },
   "archive_policy": {

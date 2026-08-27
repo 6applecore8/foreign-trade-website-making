@@ -19,8 +19,17 @@
   "content_source": "artifacts/03-content/home-content.json",
   "files": [
     "index.html",
+    "shoes.html",
+    "apparel.html",
+    "looks.html",
     "styles.css",
-    "site-spec.json"
+    "site-spec.json",
+    "hero-campaign.png",
+    "product-footwear.png",
+    "product-apparel.png",
+    "catalog-shoes.png",
+    "catalog-apparel.png",
+    "catalog-looks.png"
   ],
-  "generated_at": "2026-08-22T06:15:18Z"
+  "generated_at": "2026-08-26T14:00:00+08:00"
 }

@@ -7,8 +7,8 @@ from jsonschema import Draft202012Validator, FormatChecker
 
 
 ROOT = Path(__file__).resolve().parents[2]
-WORKFLOW_SHA256 = "904f31436f20b127bf0b69c6a25b3192ffde34d6988b02d684a9a224375f40e8"
-ACTIVE_CONFIG_SHA256 = "fca56e7e9f7a981574797b2231a203761deba03e4c6286bc6359bd590acd435b"
+WORKFLOW_SHA256 = "aef3168d50c9d6f987091a5b6f4ced9463bf24be3e4db7a5ef3e2dd7f7586d39"
+ACTIVE_CONFIG_SHA256 = "5a9388582dd460b508bd1e04682cfaf898bec9cda6e8dc1e6a36805e582a44ea"
 CURRENT_REQUEST = "intake/requests/req-20260822T163205Z-4128f061e2"  # current Schema + reference + SEO files
 LEGACY_REQUEST = "intake/requests/req-20260822T145213Z-d6a2781cb7"
 
@@ -146,17 +146,20 @@ class IntakeCompatibilityGateContractTests(unittest.TestCase):
         self.assertTrue(any("schema-invalid" in issue for issue in legacy_issues), legacy_issues)
         self.assertNotEqual([], validate_selected_request("latest"))
 
-    def test_graph_limits_active_config_and_exact_three_files_are_unchanged(self):
+    def test_graph_limits_active_config_and_exact_twelve_files_are_unchanged(self):
         self.assertEqual(WORKFLOW_SHA256, sha256(ROOT / "workflow.json"))
         self.assertEqual(ACTIVE_CONFIG_SHA256, sha256(ROOT / "config" / "site-config.json"))
         workflow = json.loads((ROOT / "workflow.json").read_text(encoding="utf-8"))
         self.assertEqual(6, len(workflow["nodes"]))
-        self.assertEqual(11, len(workflow["edges"]))
+        self.assertEqual(13, len(workflow["edges"]))
         self.assertNotIn("intake", {node["id"] for node in workflow["nodes"]})
-        self.assertEqual(1, workflow["limits"]["pages"])
-        self.assertEqual(3, workflow["limits"]["implementation_files"])
+        self.assertEqual(4, workflow["limits"]["pages"])
+        self.assertEqual(12, workflow["limits"]["implementation_files"])
         site = ROOT / "artifacts" / "04-implementation" / "site"
-        self.assertEqual({"index.html", "styles.css", "site-spec.json"}, {p.name for p in site.iterdir() if p.is_file()})
+        self.assertEqual(
+            {"index.html", "shoes.html", "apparel.html", "looks.html", "styles.css", "site-spec.json", "hero-campaign.png", "product-footwear.png", "product-apparel.png", "catalog-shoes.png", "catalog-apparel.png", "catalog-looks.png"},
+            {p.name for p in site.iterdir() if p.is_file()},
+        )
 
 
 if __name__ == "__main__":

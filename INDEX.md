@@ -5,6 +5,8 @@
 | 路径 | 用途 | 写入者 |
 |---|---|---|
 | `workflow.json` | 节点、边、输入输出契约；Intake 仅作非节点前置入口 | 人工维护 / 主 Agent 读取 |
+| `AGENT-HANDOFF.md` | 给 Main Agent/Subagent 的最小文件交接说明 | 人工维护 / 所有 Agent 读取 |
+| `agent-context.json` | 机器可读的 Agent 文件、读写权和入口清单 | 人工维护 / 所有 Agent 读取 |
 | `intake/` | 可选本地 UI 与 append-only request 快照（不是 Agent 节点） | Intake 服务（工作流只读选定请求） |
 | `scripts/archive_run.py` | 运行快照的安全归档工具 | workflow-maintenance Owner |
 | `archive/runs/` | append-only 历史运行快照 | 归档工具 |
@@ -22,7 +24,7 @@
 1. `main-agent`：解析输入、调度、合并、输出结果。
 2. `01-requirements`：只分析网站目标、受众、页面范围和 CTA。
 3. `02-metadata`：只处理 HTML head 所需的 title、description、keywords。
-4. `03-content`：只生成单页首页内容，不写代码。
+4. `03-content`：生成首页与三个商品分类页内容，不写代码。
 5. `04-implementation`：只在自己的输出目录生成静态网站文件。
 6. `05-validation`：只检查 MVP 验收条件，不改其他 Agent 的文件。
 
@@ -53,7 +55,7 @@
 
 ## 索引豁免
 
-`artifacts/04-implementation/site/` 为交付产物目录（契约恰好 3 文件），不放置 INDEX.md，
+`artifacts/04-implementation/site/` 为交付产物目录（契约恰好 12 文件），不放置 INDEX.md，
 其说明由 `artifacts/04-implementation/INDEX.md` 承担。
 ## 不可破坏的运行归档契约
 
@@ -65,4 +67,4 @@
 
 ## Intake 导航（非 Agent 节点）
 
-`intake/` 是可选的本地需求采集入口；提交只能追加 `intake/requests/<request_id>/`。用户必须明确选择项目根相对请求目录，不能隐式选择 `latest`。Main Agent 在 archive gate 之前按当前 `intake/request.schema.json` 和 `config/site-config.schema.json` 校验所选快照，并验证目录/request_id 身份、必需文件、size/媒体签名以及所有路径 resolved 后 containment 到该选定 request 目录；旧格式失败即返回“不可导入；请重新提交”，不写 active config、不派发、不迁移或修改历史。门禁通过且 archive gate verified 后才可导入；top-level `industry`/`site_type`/`brand` 分别保真映射到 `website_intent.industry`/`site_type`/`brand_name`，参考图不构成品牌事实。Requirements 保真这些身份字段，Content 只用行业选择离线 FAQ 主题并以品牌名/站点类型约束桌面单页内容范围。真实执行图仍只有上列 1 个 Main Agent + 5 个 Owner，`nodes`/`edges`、单页和 3 实现文件限制不变；不加入移动端要求。
+`intake/` 是可选的本地需求采集入口；提交只能追加 `intake/requests/<request_id>/`。用户必须明确选择项目根相对请求目录，不能隐式选择 `latest`。Main Agent 在 archive gate 之前按当前 Schema 校验所选快照并执行路径、媒体签名与 containment 门禁；旧格式失败即返回“不可导入；请重新提交”。门禁通过且 archive gate verified 后才可导入。真实执行图仍只有上列 1 个 Main Agent + 5 个 Owner；当前 NOVA MVP 范围为桌面端 4 页面和 12 个实现文件，不加入移动端或真实交易功能。

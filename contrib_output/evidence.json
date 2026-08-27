@@ -1,0 +1,413 @@
+{
+  "project": {
+    "repo_path": "C:\\Users\\HP\\.hermes\\workspace\\site-workflow-mvp",
+    "project_name": "site-workflow-mvp",
+    "languages": {
+      "HTML": 6,
+      "CSS": 3,
+      "Python": 32,
+      "JavaScript": 8,
+      "Vue": 5,
+      "SQL": 1
+    },
+    "frameworks": [
+      "Vue"
+    ],
+    "databases": [
+      "PostgreSQL"
+    ],
+    "middlewares": [],
+    "deployment": [
+      "Docker Compose"
+    ],
+    "architecture_style": "多服务/微服务倾向（多个子目录含独立依赖文件 + docker-compose）",
+    "inferred_domain": "AI Agent / LLM 应用（次要相关：OA/协同办公）",
+    "confidence": "中"
+  },
+  "tech_stack": {
+    "languages": {
+      "HTML": 6,
+      "CSS": 3,
+      "Python": 32,
+      "JavaScript": 8,
+      "Vue": 5,
+      "SQL": 1
+    },
+    "frameworks": [
+      "Vue"
+    ],
+    "databases": [
+      "PostgreSQL"
+    ],
+    "middlewares": [],
+    "build_tools": [
+      "npm/yarn/pnpm",
+      "Vite",
+      "pip"
+    ],
+    "deployment": [
+      "Docker Compose"
+    ],
+    "test_tools": [
+      "Vitest"
+    ],
+    "possible_architecture_style": "前端应用（推断）",
+    "evidence_files": [
+      "intake\\package.json",
+      "rag\\requirements.txt",
+      "rag\\docker-compose.yml"
+    ]
+  },
+  "architecture": {
+    "architecture_style": "多服务/微服务倾向（多个子目录含独立依赖文件 + docker-compose）",
+    "module_map": {
+      "archive": [
+        "archive"
+      ],
+      "archive\\runs": [
+        "archive\\runs"
+      ],
+      "artifacts": [
+        "artifacts"
+      ],
+      "artifacts\\01-requirements": [
+        "artifacts\\01-requirements"
+      ],
+      "artifacts\\02-metadata": [
+        "artifacts\\02-metadata"
+      ],
+      "artifacts\\03-content": [
+        "artifacts\\03-content"
+      ],
+      "artifacts\\04-implementation": [
+        "artifacts\\04-implementation"
+      ],
+      "artifacts\\05-validation": [
+        "artifacts\\05-validation"
+      ],
+      "config": [
+        "config"
+      ],
+      "docs": [
+        "docs"
+      ],
+      "intake": [
+        "intake"
+      ],
+      "intake\\requests": [
+        "intake\\requests"
+      ],
+      "intake\\src": [
+        "intake\\src"
+      ],
+      "intake\\tests": [
+        "intake\\tests"
+      ],
+      "main-agent": [
+        "main-agent"
+      ],
+      "main-agent\\tests": [
+        "main-agent\\tests"
+      ],
+      "orchestrator": [
+        "orchestrator"
+      ],
+      "orchestrator\\adapters": [
+        "orchestrator\\adapters"
+      ],
+      "orchestrator\\tests": [
+        "orchestrator\\tests"
+      ],
+      "rag": [
+        "rag"
+      ],
+      "rag-data": [
+        "rag-data"
+      ],
+      "rag-data\\digests": [
+        "rag-data\\digests"
+      ],
+      "rag-data\\outputs": [
+        "rag-data\\outputs"
+      ],
+      "rag-data\\raw": [
+        "rag-data\\raw"
+      ],
+      "rag-data\\test-runs": [
+        "rag-data\\test-runs"
+      ],
+      "rag\\docs": [
+        "rag\\docs"
+      ],
+      "rag\\examples": [
+        "rag\\examples"
+      ],
+      "rag\\reports": [
+        "rag\\reports"
+      ],
+      "rag\\sql": [
+        "rag\\sql"
+      ],
+      "rag\\tests": [
+        "rag\\tests"
+      ]
+    },
+    "layer_analysis": [],
+    "dependency_observations": [
+      "主要框架：Vue（来自 intake\\package.json, rag\\requirements.txt, rag\\docker-compose.yml）",
+      "数据存储：PostgreSQL"
+    ],
+    "architecture_strengths": [
+      "存在测试目录（intake\\tests, main-agent\\tests, orchestrator\\tests）",
+      "具备部署配置：Docker Compose"
+    ],
+    "architecture_risks": [],
+    "design_patterns": [
+      "适配器模式"
+    ],
+    "pattern_evidence": {
+      "适配器模式": [
+        "orchestrator/adapters"
+      ]
+    },
+    "confidence": "中"
+  },
+  "business": {
+    "inferred_domain": "AI Agent / LLM 应用（次要相关：OA/协同办公）",
+    "project_goal": "README 描述（事实）：一个“主 Agent + Subagent”自动创建本地静态网站的最小可行工作流。",
+    "solved_problem": "推断：见 README 描述；具体业务痛点建议向项目负责人确认",
+    "target_users": "推断：需结合业务方确认（仓库内无直接证据）",
+    "core_business_flow": "推断：数据统计与报表",
+    "confidence": "中",
+    "missing_information_questions": [
+      "这个项目是真实上线、内部使用，还是课程/练习项目？",
+      "项目的实际用户是谁？大概什么量级？",
+      "项目立项的直接原因是什么（业务痛点 / 课程要求 / 个人兴趣）？",
+      "是否有线上运行数据（QPS、日活、数据量）可以补充？",
+      "团队总人数和分工是怎样的？"
+    ],
+    "evidence_sources": [
+      "README: README.md",
+      "领域关键词命中：agent, rag"
+    ]
+  },
+  "commits": [
+    {
+      "hash": "845bec98d710d58a7b0f0474fdcd7a81a612ccd2",
+      "short_hash": "845bec9",
+      "author_name": "Hermes Agent",
+      "author_email": "hermes-agent@local",
+      "date": "2026-08-23T16:45:49+08:00",
+      "message": "feat: create local multi-agent website workflow MVP",
+      "changed_files": [
+        ".gitignore",
+        "INDEX.md",
+        "README.md",
+        "archive/INDEX.md",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/01-requirements/INDEX.md",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/01-requirements/requirements.json",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/02-metadata/INDEX.md",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/02-metadata/metadata.json",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/03-content/INDEX.md",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/03-content/home-content.json",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/04-implementation/INDEX.md",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/04-implementation/site/index.html",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/04-implementation/site/site-spec.json",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/04-implementation/site/styles.css",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/05-validation/INDEX.md",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/05-validation/validation-report.json",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/INDEX.md",
+        "archive/runs/20260821T075855+0800-coffee-demo/config/site-config.json",
+        "archive/runs/20260821T075855+0800-coffee-demo/run-manifest.json",
+        "archive/runs/INDEX.md",
+        "artifacts/01-requirements/INDEX.md",
+        "artifacts/01-requirements/requirements.json",
+        "artifacts/02-metadata/INDEX.md",
+        "artifacts/02-metadata/metadata.json",
+        "artifacts/03-content/INDEX.md",
+        "artifacts/03-content/home-content.json",
+        "artifacts/04-implementation/INDEX.md",
+        "artifacts/04-implementation/site/index.html",
+        "artifacts/04-implementation/site/site-spec.json",
+        "artifacts/04-implementation/site/styles.css",
+        "artifacts/05-validation/INDEX.md",
+        "artifacts/05-validation/validation-report.json",
+        "artifacts/INDEX.md",
+        "config/INDEX.md",
+        "config/site-config.example.json",
+        "config/site-config.json",
+        "config/site-config.schema.json",
+        "intake/INDEX.md",
+        "intake/PROMPT.md",
+        "intake/dist/INDEX.md",
+        "intake/dist/assets/index-C-x_PeAc.css",
+        "intake/dist/assets/index-rBLlCbcI.js",
+        "intake/dist/index.html",
+        "intake/index.html",
+        "intake/package-lock.json",
+        "intake/package.json",
+        "intake/request.schema.json",
+        "intake/server.py",
+        "intake/src/App.vue",
+        "intake/src/INDEX.md",
+        "intake/src/components/ErrorSummary.vue",
+        "intake/src/components/FaqRow.vue",
+        "intake/src/components/INDEX.md",
+        "intake/src/components/ReferenceRow.vue",
+        "intake/src/components/SuccessReceipt.vue",
+        "intake/src/core/INDEX.md",
+        "intake/src/core/api.js",
+        "intake/src/core/request.js",
+        "intake/src/core/storage.js",
+        "intake/src/core/validation.js",
+        "intake/src/main.js",
+        "intake/src/styles.css",
+        "intake/tests/INDEX.md",
+        "intake/tests/app.test.js",
+        "intake/tests/request.test.js",
+        "intake/tests/test_server.py",
+        "intake/vite.config.js",
+        "main-agent/INDEX.md",
+        "main-agent/PROMPT.md",
+        "main-agent/tests/INDEX.md",
+        "main-agent/tests/test_intake_compatibility_gate.py",
+        "scripts/INDEX.md",
+        "scripts/archive_run.py",
+        "subagents/01-requirements/INDEX.md",
+        "subagents/01-requirements/PROMPT.md",
+        "subagents/02-metadata/INDEX.md",
+        "subagents/02-metadata/PROMPT.md",
+        "subagents/03-content/INDEX.md",
+        "subagents/03-content/PROMPT.md",
+        "subagents/04-implementation/INDEX.md",
+        "subagents/04-implementation/PROMPT.md",
+        "subagents/05-validation/INDEX.md",
+        "subagents/05-validation/PROMPT.md",
+        "subagents/INDEX.md",
+        "workflow.json"
+      ],
+      "additions": 10687,
+      "deletions": 0,
+      "file_stats": [],
+      "is_merge": false,
+      "inferred_type": "ci",
+      "type_confidence": "中",
+      "changed_modules": [
+        "(root)",
+        "archive",
+        "artifacts",
+        "config",
+        "intake",
+        "main-agent",
+        "scripts",
+        "subagents"
+      ],
+      "possible_reason": "推断：该提交属于 ci 类变更（依据关键词 workflow, package.json）",
+      "possible_impact": "推断：维护持续集成流水线",
+      "evidence_keywords": [
+        "workflow",
+        "package.json"
+      ],
+      "risk_notes": ""
+    }
+  ],
+  "authors": [
+    {
+      "author_name": "Hermes Agent",
+      "author_email": "hermes-agent@local",
+      "commit_count": 1,
+      "first_commit_date": "2026-08-23T16:45:49+08:00",
+      "last_commit_date": "2026-08-23T16:45:49+08:00",
+      "total_additions": 10687,
+      "total_deletions": 0,
+      "main_files": [
+        ".gitignore",
+        "INDEX.md",
+        "README.md",
+        "archive/INDEX.md",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/01-requirements/INDEX.md",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/01-requirements/requirements.json",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/02-metadata/INDEX.md",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/02-metadata/metadata.json",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/03-content/INDEX.md",
+        "archive/runs/20260821T075855+0800-coffee-demo/artifacts/03-content/home-content.json"
+      ],
+      "main_modules": [
+        "intake",
+        "archive",
+        "artifacts",
+        "subagents",
+        "(root)",
+        "config"
+      ],
+      "change_type_distribution": {
+        "ci": 1
+      },
+      "activity_timeline": {
+        "2026-08": 1
+      },
+      "weekday_commits": 0,
+      "weekend_commits": 1,
+      "daytime_commits": 1,
+      "night_commits": 0,
+      "is_project_initializer": true,
+      "touches_core_modules": true,
+      "does_late_maintenance": true,
+      "contribution_roles": [
+        "项目初始化者",
+        "前端开发者",
+        "AI/算法模块参与者"
+      ],
+      "contribution_level": "较低",
+      "module_ownership": {
+        "(root)": "maintainer",
+        "archive": "maintainer",
+        "artifacts": "maintainer",
+        "config": "maintainer",
+        "intake": "maintainer",
+        "main-agent": "maintainer",
+        "scripts": "participant",
+        "subagents": "maintainer"
+      },
+      "evidence_commits": [
+        "845bec9"
+      ]
+    }
+  ],
+  "target_author": "Hermes Agent",
+  "resume_claims": [
+    {
+      "text": "工程化建设：针对多环境协作中依赖、构建与配置入口需要保持一致的工程要求，完善项目工程化建设，落地create local multi-agent website workflow MVP并统一依赖、构建与配置入口；形成可复用的环境准备与交付路径，减少重复配置和协作维护成本。",
+      "risk_level": "safe",
+      "support_evidence": [
+        "commit 845bec9 [ci] feat: create local multi-agent website workflow MVP；文件：.gitignore、INDEX.md、README.md、archive/INDEX.md"
+      ],
+      "needs_user_confirmation": false,
+      "forbidden_reason": ""
+    }
+  ],
+  "project_context_assessments": [
+    {
+      "statement": "项目性质/使用场景：本地静态网站生成工作流 MVP：通过主 Agent 调度多个 Subagent，完成需求分析、元数据、内容生成、网站实现和验证，面向需要快速生成并验证本地网站的开发场景。",
+      "source": "用户提供",
+      "risk_level": "needs_confirmation",
+      "analysis": "按用户明确提供的背景写入项目简介；项目是否真实上线、内部使用、开源或课程实践通常无法仅凭代码仓库独立核验。",
+      "support_evidence": [
+        "用户明确提供的项目背景"
+      ]
+    }
+  ],
+  "benchmark": null,
+  "analysis_params": {
+    "base": null,
+    "branch": null,
+    "since": null,
+    "until": null,
+    "mode": "resume",
+    "strict": false,
+    "max_commits": 2000,
+    "has_tests": true,
+    "project_context": "本地静态网站生成工作流 MVP：通过主 Agent 调度多个 Subagent，完成需求分析、元数据、内容生成、网站实现和验证，面向需要快速生成并验证本地网站的开发场景。",
+    "benchmark_report": null
+  }
+}

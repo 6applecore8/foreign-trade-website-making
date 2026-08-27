@@ -1,0 +1,17 @@
+{
+  "total_commits": 1,
+  "total_authors": 1,
+  "commit_type_distribution": {
+    "ci": 1
+  },
+  "authors": [
+    {
+      "name": "Hermes Agent",
+      "email": "hermes-agent@local",
+      "commits": 1,
+      "additions": 10687,
+      "deletions": 0,
+      "contribution_level": "较低"
+    }
+  ]
+}

@@ -71,7 +71,41 @@ site-workflow-mvp/
    ↓
 04 implementation：写本地网站文件
    ↓
-05 validation：检查元数据、文件、引用和本地运行条件
+05 validation：Runner 代码负责确定性与浏览器证据门禁，LLM 只复核可读性、风格一致性和事实风险
+
+## 仓库内执行引擎
+
+`orchestrator/` 会加载并校验 `workflow.json`、按拓扑顺序执行节点、通过 `AgentExecutor` 对接模型 Provider、校验声明产物、记录运行状态，并比较执行前后的全仓库文件哈希以拒绝越权写入。路径在执行前做项目根 containment 和符号链接检查；Intake 上传文本在 Provider manifest 中明确标为不可信数据。
+
+`DeterministicValidator` 读取 config、requirements、metadata、content 和 implementation，负责文件集合、元数据、需求及内容覆盖率、引用与禁止事实检查。`BrowserEvidenceValidator` 要求截图及哈希、DOM、overflow、CTA 和 console error 证据作为运行产物持久化。`LLMReviewValidator` 只处理主观质量，不能覆盖前两层失败。
+
+Runner 在 implementation 完成后强制调用 `BrowserEvidenceCollector`。未配置真实浏览器收集器、桌面截图缺失、标题行盒重叠、标题越出容器、横向溢出、截图哈希不一致或控制台报错时，运行会在进入 LLM Validation 前失败关闭，不能把首版交给用户。
+
+运行执行引擎反例测试：
+
+```text
+python -m unittest discover -s orchestrator/tests -p "test_*.py" -v
+```
+
+用 Hermes 命令执行工作流（Runner 会把节点 manifest 路径追加到命令末尾）：
+
+```text
+python -m orchestrator --run-id demo hermes run-node
+```
+
+## 甲方需求文档 RAG
+
+`rag/` 提供 PostgreSQL 16 + pgvector 的本地需求检索层。甲方 Markdown、TXT 或 JSON 文档按 SHA-256 保存为不可变原文，经过标题感知切分后写入独立 `project_key`；Main Agent 只接收带 `source_ref` 的只读 context pack，并把上传文本视为不可信数据。
+
+```text
+docker compose -f rag/docker-compose.yml up -d
+python -m pip install -r rag/requirements.txt
+python -m rag.cli init-db
+python -m rag.cli ingest --project-key client-a --document path/to/requirements.md
+python -m rag.cli build-context --project-key client-a --questions-file rag/site-questions.json --output rag-data/outputs/client-a-context.json
+```
+
+完整契约、测试和香水行业基准见 `rag/README.md`。调用方必须明确把生成的 context pack 传给 Main Agent；RAG 不会绕过 Intake、归档、Schema、目录 ACL 或浏览器证据门禁。
    ↓
 主 Agent：返回结果与本地启动命令
 ```
@@ -97,7 +131,7 @@ python -m http.server 4173 --directory artifacts/04-implementation/site
 ## MVP 明确不做
 
 - 公网部署、域名、HTTPS、云存储。
-- 登录、数据库、支付、后台管理。
+- 生成的网站运行时不含登录、业务数据库、支付或后台管理；设计期 RAG 的 PostgreSQL 仅保存甲方需求证据。
 - 图片生成与外部 API 集成。
 - 多页面路由和复杂 SPA 架构。
 - 自动反复修复循环。验证失败时只返回明确错误列表。

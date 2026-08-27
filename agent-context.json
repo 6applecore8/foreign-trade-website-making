@@ -1,0 +1,137 @@
+{
+  "schema_version": "1.0",
+  "project": "site-workflow-mvp",
+  "important_note": "This repository includes a provider-neutral workflow runner. Hermes remains one adapter; structural validation and filesystem enforcement are repository-owned.",
+  "entrypoints": {
+    "agent_orchestration": "workflow.json",
+    "runner": "orchestrator/runner.py",
+    "main_agent_prompt": "main-agent/PROMPT.md",
+    "active_input": "config/site-config.json",
+    "intake_server": "intake/server.py",
+    "generated_site": "artifacts/04-implementation/site/index.html"
+  },
+  "dispatch_order": [
+    "requirements",
+    "metadata_and_content_in_parallel_after_requirements",
+    "implementation",
+    "validation",
+    "main_agent_finalize"
+  ],
+  "agents": {
+    "main-agent": {
+      "prompt": "main-agent/PROMPT.md",
+      "reads": [
+        "workflow.json",
+        "config/site-config.schema.json",
+        "config/site-config.json",
+        "artifacts/**"
+      ],
+      "writes": [
+        "config/site-config.json"
+      ]
+    },
+    "requirements": {
+      "prompt": "subagents/01-requirements/PROMPT.md",
+      "reads": [
+        "config/site-config.json"
+      ],
+      "writes": [
+        "artifacts/01-requirements/requirements.json"
+      ]
+    },
+    "metadata": {
+      "prompt": "subagents/02-metadata/PROMPT.md",
+      "reads": [
+        "config/site-config.json",
+        "artifacts/01-requirements/requirements.json"
+      ],
+      "writes": [
+        "artifacts/02-metadata/metadata.json"
+      ]
+    },
+    "content": {
+      "prompt": "subagents/03-content/PROMPT.md",
+      "reads": [
+        "config/site-config.json",
+        "artifacts/01-requirements/requirements.json"
+      ],
+      "writes": [
+        "artifacts/03-content/home-content.json"
+      ]
+    },
+    "implementation": {
+      "prompt": "subagents/04-implementation/PROMPT.md",
+      "reads": [
+        "config/site-config.json",
+        "artifacts/01-requirements/requirements.json",
+        "artifacts/02-metadata/metadata.json",
+        "artifacts/03-content/home-content.json"
+      ],
+      "writes": [
+        "artifacts/04-implementation/site/index.html",
+        "artifacts/04-implementation/site/shoes.html",
+        "artifacts/04-implementation/site/apparel.html",
+        "artifacts/04-implementation/site/looks.html",
+        "artifacts/04-implementation/site/styles.css",
+        "artifacts/04-implementation/site/site-spec.json",
+        "artifacts/04-implementation/site/hero-campaign.png",
+        "artifacts/04-implementation/site/product-footwear.png",
+        "artifacts/04-implementation/site/product-apparel.png",
+        "artifacts/04-implementation/site/catalog-shoes.png",
+        "artifacts/04-implementation/site/catalog-apparel.png",
+        "artifacts/04-implementation/site/catalog-looks.png"
+      ]
+    },
+    "validation": {
+      "prompt": "subagents/05-validation/PROMPT.md",
+      "reads": [
+        "config/site-config.json",
+        "artifacts/01-requirements/requirements.json",
+        "artifacts/02-metadata/metadata.json",
+        "artifacts/03-content/home-content.json",
+        "artifacts/04-implementation/site/**"
+      ],
+      "writes": [
+        "artifacts/05-validation/validation-report.json"
+      ]
+    }
+  },
+  "supporting_files": {
+    "input_contracts": [
+      "config/site-config.schema.json",
+      "intake/request.schema.json"
+    ],
+    "archive_gate": [
+      "scripts/archive_run.py"
+    ],
+    "intake_production": [
+      "intake/server.py",
+      "intake/dist/index.html",
+      "intake/dist/assets/**"
+    ],
+    "intake_development": [
+      "intake/package.json",
+      "intake/package-lock.json",
+      "intake/vite.config.js",
+      "intake/index.html",
+      "intake/src/**"
+    ],
+    "tests": [
+      "intake/tests/**",
+      "main-agent/tests/**"
+    ],
+    "navigation_docs": [
+      "INDEX.md",
+      "**/INDEX.md"
+    ]
+  },
+  "runtime_or_generated_not_prompt_input_by_default": {
+    "customer_request_snapshots": "intake/requests/**",
+    "current_artifacts": "artifacts/**",
+    "history": "archive/runs/**",
+    "compiled_frontend": "intake/dist/**",
+    "logs": "intake/*.log",
+    "screenshots": "screenshots/**",
+    "dependencies": "intake/node_modules/**"
+  }
+}

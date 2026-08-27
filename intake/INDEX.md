@@ -7,6 +7,7 @@ Vue 3 + Vite 单文件组件（SFC）桌面需求采集 UI，以及仅绑定 loo
 在 `intake/` 安装依赖后，分别运行：
 
 ```text
+python -m pip install -r requirements.txt
 python server.py --port 4180
 npm run dev
 ```

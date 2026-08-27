@@ -112,10 +112,10 @@ python -m rag.cli build-context --project-key client-a --questions-file rag/site
 
 ## 运行约定
 
-Windows 桌面一键启动：双击 `C:\Users\HP\Desktop\启动独立站工作流.bat`。版本化的启动逻辑位于 `scripts/start-site-workflow.bat`，会依次检查本地依赖、启动 PostgreSQL/pgvector、初始化 RAG、启动 `127.0.0.1:4173` 静态网站并打开浏览器。只检查依赖而不启动服务时执行：
+Windows 桌面一键打开建站需求采集页面：双击 `C:\Users\HP\Desktop\启动独立站工作流.bat`。版本化的启动逻辑位于 `scripts/start-site-intake.bat`，会启动只绑定 loopback 的 Intake 服务，并打开 `http://127.0.0.1:4180/`。该入口用于填写行业、品牌、参考资料、FAQ 与 SEO 等创建独立站所需信息，不会启动生成后的网站或覆盖 active config。只检查依赖而不启动服务时执行：
 
 ```text
-scripts\start-site-workflow.bat --check
+scripts\start-site-intake.bat --check
 ```
 
 1. 可直接使用 legacy 自然语言输入；若使用 Intake，提交只写 `intake/requests/<request_id>/`。用户必须明确选择项目根相对请求目录，不得隐式选择 `latest`。主 Agent 在归档旧运行之前，先按当前 `intake/request.schema.json`/`config/site-config.schema.json` 校验所选快照，并验证目录身份、必需文件、size/签名及路径 containment；旧格式必须 fail closed，提示“不可导入；请重新提交”，且不写 active config、不派发、不迁移或修改历史。该门禁和 archive gate 均通过后，才把候选配置导入 active `config/site-config.json`。Intake UI 不是 Agent 节点。

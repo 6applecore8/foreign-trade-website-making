@@ -112,7 +112,7 @@ python -m rag.cli build-context --project-key client-a --questions-file rag/site
 
 ## 运行约定
 
-Windows 桌面一键打开建站需求采集页面：双击 `C:\Users\HP\Desktop\启动独立站工作流.bat`。版本化的启动逻辑位于 `scripts/start-site-intake.bat`，会启动只绑定 loopback 的 Intake 服务，并打开 `http://127.0.0.1:4180/`。该入口用于填写行业、品牌、参考资料、FAQ 与 SEO 等创建独立站所需信息，不会启动生成后的网站或覆盖 active config。只检查依赖而不启动服务时执行：
+Windows 桌面一键打开建站需求采集页面：双击 `C:\Users\HP\Desktop\启动独立站工作流.bat`。版本化的启动逻辑位于 `scripts/start-site-intake.bat`，会启动只绑定 loopback 的 Intake 服务，并打开 `http://127.0.0.1:4180/`。该入口用于填写行业、品牌、参考资料、FAQ、SEO，并选择具体页面元素逐项备注。提交后可点击“通知 Agent 开始运行”；后端只会启动服务端通过 `SITE_AGENT_COMMAND_JSON` 预配置的 Agent 命令，并把不可变请求 manifest 传给它。Agent 未配置时页面明确提示，不会伪造已经运行。该入口不会启动生成后的网站或覆盖 active config。只检查依赖而不启动服务时执行：
 
 ```text
 scripts\start-site-intake.bat --check

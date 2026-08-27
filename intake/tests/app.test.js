@@ -51,6 +51,7 @@ describe("critical fields render", () => {
     expect(text).toContain("可选 SEO 文档");
     expect(wrapper.find("form").exists()).toBe(true);
     expect(wrapper.find("#submit").exists()).toBe(true);
+    expect(wrapper.find("#element-annotations").exists()).toBe(true);
   });
 
   it("shows the JSON preview disclosure without any uploaded bytes", () => {
@@ -58,6 +59,25 @@ describe("critical fields render", () => {
     expect(wrapper.text()).toContain("只含结构和文件元数据，不含上传文件字节，文件需重新选择。");
     const preview = wrapper.find("#json-preview");
     expect(preview.exists()).toBe(true);
+  });
+});
+
+describe("element annotations", () => {
+  it("requires a note for a selected element and writes the structured annotation", async () => {
+    const wrapper = mount(App);
+    await fillRequired(wrapper);
+    await wrapper.find("#annotation-product-grid").setValue(true);
+    await wrapper.find("form").trigger("submit");
+    expect(wrapper.find("#error-summary").text()).toContain("商品网格");
+    await wrapper.find("#annotation-note-product-grid").setValue("桌面端一行 5 个商品，图片尺寸适中");
+    const preview = JSON.parse(wrapper.find("#json-preview").text());
+    expect(preview.element_annotations).toEqual([{
+      element_id: "product-grid",
+      page_scope: "category",
+      priority: "must",
+      note: "桌面端一行 5 个商品，图片尺寸适中"
+    }]);
+    expect(preview.website.element_annotations).toEqual(preview.element_annotations);
   });
 });
 
@@ -396,5 +416,38 @@ describe("submission contract", () => {
     expect(wrapper.find("#status").text()).toBe("保存失败");
     expect(wrapper.find("#success").exists()).toBe(false);
     expect(wrapper.find("#error-summary").text()).toContain("磁盘已满");
+  });
+
+  it("starts the Agent for the immutable request only after a successful save", async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ request_id: "req-123", absolute_path: "C:/safe/req-123", relative_path: "intake/requests/req-123" }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ run_id: "run-123", request_id: "req-123", status: "running" }) });
+    vi.stubGlobal("fetch", fetchMock);
+    const wrapper = mount(App);
+    await fillRequired(wrapper);
+    await wrapper.find("form").trigger("submit");
+    await flushPromises();
+    expect(wrapper.find("#start-agent").exists()).toBe(true);
+    await wrapper.find("#start-agent").trigger("click");
+    await flushPromises();
+    expect(fetchMock.mock.calls[1][0]).toBe("/api/runs");
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({ request_id: "req-123" });
+    expect(wrapper.find("#agent-run-status").text()).toContain("run-123");
+    expect(wrapper.find("#start-agent").attributes("disabled")).toBeDefined();
+  });
+
+  it("shows an honest error when no Agent provider is configured", async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ request_id: "req-123", absolute_path: "C:/safe/req-123", relative_path: "intake/requests/req-123" }) })
+      .mockResolvedValueOnce({ ok: false, json: async () => ({ error: "agent_not_configured", message: "Agent 未配置" }) });
+    vi.stubGlobal("fetch", fetchMock);
+    const wrapper = mount(App);
+    await fillRequired(wrapper);
+    await wrapper.find("form").trigger("submit");
+    await flushPromises();
+    await wrapper.find("#start-agent").trigger("click");
+    await flushPromises();
+    expect(wrapper.find("#agent-run-error").text()).toBe("Agent 未配置");
+    expect(wrapper.find("#start-agent").attributes("disabled")).toBeUndefined();
   });
 });

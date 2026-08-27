@@ -19,6 +19,8 @@ from pathlib import Path
 import re
 import shutil
 import stat
+import subprocess
+import threading
 from typing import Any
 import uuid
 from urllib.parse import unquote, urlsplit
@@ -41,6 +43,112 @@ ALLOWED_PURPOSES = {
     "hero", "product-service", "about", "faq", "background-style", "custom"
 }
 PROJECT_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]{0,48}$")
+REQUEST_ID_PATTERN = re.compile(r"^req-[A-Za-z0-9._-]+$")
+RUN_ID_PATTERN = re.compile(r"^run-[A-Za-z0-9._-]+$")
+MAX_RUN_POST_BYTES = 16 * 1024
+
+
+class AgentNotConfigured(RuntimeError):
+    pass
+
+
+class AgentLaunchError(RuntimeError):
+    pass
+
+
+class AgentRunConflict(RuntimeError):
+    def __init__(self, run_id: str):
+        super().__init__("Request already has an Agent run")
+        self.run_id = run_id
+
+
+class CommandAgentLauncher:
+    """Launch a configured Agent command without accepting commands from HTTP."""
+
+    def __init__(self, command: list[str], runtime_root: Path):
+        if not command or any(not isinstance(part, str) or not part for part in command):
+            raise ValueError("Agent command must be a non-empty JSON string array")
+        self.command = list(command)
+        self.runtime_root = Path(runtime_root)
+        self._processes: dict[str, subprocess.Popen[bytes]] = {}
+        self._records: dict[str, dict[str, Any]] = {}
+        self._lock = threading.Lock()
+
+    @classmethod
+    def from_environment(cls, runtime_root: Path) -> "CommandAgentLauncher | None":
+        raw = os.environ.get("SITE_AGENT_COMMAND_JSON", "").strip()
+        if not raw:
+            return None
+        try:
+            command = json.loads(raw)
+        except json.JSONDecodeError as error:
+            raise ValueError("SITE_AGENT_COMMAND_JSON must be valid JSON") from error
+        if not isinstance(command, list):
+            raise ValueError("SITE_AGENT_COMMAND_JSON must be a JSON string array")
+        return cls(command, runtime_root)
+
+    def start(self, request_id: str, request_dir: Path) -> dict[str, Any]:
+        run_id = f"run-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:10]}"
+        relative_request = request_dir.resolve(strict=True).relative_to(PROJECT_ROOT.resolve(strict=True)).as_posix()
+        run_dir = self.runtime_root / run_id
+        run_dir.mkdir(parents=True, exist_ok=False)
+        manifest = {
+            "schema_version": "1.0",
+            "run_id": run_id,
+            "request_id": request_id,
+            "request_path": relative_request,
+            "source_request": f"{relative_request}/site-request.json",
+            "source_config": f"{relative_request}/site-config.json",
+            "trust": "untrusted-user-data",
+            "allowed_reads": [
+                f"{relative_request}/site-request.json",
+                f"{relative_request}/site-config.json",
+                f"{relative_request}/references",
+                f"{relative_request}/seo",
+            ],
+            "allowed_write_root": f"runs/{run_id}",
+        }
+        manifest_path = run_dir / "launch-manifest.json"
+        _write_fsync(manifest_path, _json_bytes(manifest))
+        stdout_path = run_dir / "stdout.log"
+        stderr_path = run_dir / "stderr.log"
+        try:
+            with stdout_path.open("xb") as stdout, stderr_path.open("xb") as stderr:
+                process = subprocess.Popen(
+                    [*self.command, "--intake-manifest", str(manifest_path)],
+                    cwd=PROJECT_ROOT,
+                    stdin=subprocess.DEVNULL,
+                    stdout=stdout,
+                    stderr=stderr,
+                    shell=False,
+                    creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+                )
+        except (OSError, ValueError) as error:
+            shutil.rmtree(run_dir, ignore_errors=True)
+            raise AgentLaunchError(f"Agent process could not start: {error}") from error
+        record = {
+            "run_id": run_id,
+            "request_id": request_id,
+            "status": "running",
+            "pid": process.pid,
+            "manifest_path": str(manifest_path.relative_to(PROJECT_ROOT).as_posix()),
+        }
+        with self._lock:
+            self._processes[run_id] = process
+            self._records[run_id] = record
+        return deepcopy(record)
+
+    def status(self, run_id: str) -> dict[str, Any] | None:
+        with self._lock:
+            process = self._processes.get(run_id)
+            record = self._records.get(run_id)
+            if process is None or record is None:
+                return None
+            exit_code = process.poll()
+            if exit_code is not None:
+                record["status"] = "completed" if exit_code == 0 else "failed"
+                record["exit_code"] = exit_code
+            return deepcopy(record)
 
 class InvalidImage(ValueError):
     pass
@@ -527,6 +635,8 @@ def _site_config(payload: dict[str, Any]) -> dict[str, Any]:
         "faq": deepcopy(payload["faq"]),
         "seo": seo,
     }
+    if payload["element_annotations"]:
+        config["website_intent"]["element_annotations"] = deepcopy(payload["element_annotations"])
     for field in ("title", "description", "keywords"):
         if field in seo:
             config[field] = deepcopy(seo[field])
@@ -573,7 +683,7 @@ def _atomic_publish_no_replace(stage: Path, final: Path) -> None:
 INPUT_TOP_LEVEL_FIELDS = {
     "schema_version", "project_id", "industry", "site_type", "brand",
     "target_audience", "primary_goal", "required_sections", "freeform_request",
-    "project", "business", "website", "faq", "seo", "references",
+    "element_annotations", "project", "business", "website", "faq", "seo", "references",
 }
 
 
@@ -622,13 +732,18 @@ def _canonical_payload(payload: dict[str, Any]) -> dict[str, Any]:
     canonical = _contract_object(payload, (
         "schema_version", "project_id", "industry", "site_type", "brand",
         "target_audience", "primary_goal", "required_sections", "freeform_request",
+        "element_annotations",
     ))
+    canonical["element_annotations"] = deepcopy(payload.get("element_annotations", []))
     canonical["project"] = _contract_object(payload["project"], ("name",))
     canonical["business"] = _contract_object(
         payload["business"], ("name", "industry", "target_audience", "facts")
     )
     canonical["website"] = _contract_object(
-        payload["website"], ("primary_goal", "requirements", "pages", "style_notes")
+        payload["website"], ("primary_goal", "requirements", "pages", "style_notes", "element_annotations")
+    )
+    canonical["website"]["element_annotations"] = deepcopy(
+        payload["website"].get("element_annotations", canonical["element_annotations"])
     )
     canonical["faq"] = {
         "mode": deepcopy(payload["faq"]["mode"]),
@@ -662,6 +777,11 @@ def save_submission(payload: dict[str, Any], files: list[dict[str, Any]], reques
     _schema_error(REQUEST_VALIDATOR, payload, "site-request")
     payload = _canonical_payload(payload)
     _project_name(payload)
+    annotation_ids = [item["element_id"] for item in payload["element_annotations"]]
+    if len(annotation_ids) != len(set(annotation_ids)):
+        raise ValueError("Duplicate element annotation element_id")
+    if payload["website"].get("element_annotations") != payload["element_annotations"]:
+        raise ValueError("website.element_annotations must match element_annotations")
     references = payload["references"]
     if len(files) > 7:
         raise ValueError("No more than seven uploaded files are allowed")
@@ -809,10 +929,72 @@ def _validate_dist_root(dist_root: Path) -> Path:
 class IntakeHTTPServer(ThreadingHTTPServer):
     daemon_threads = True
 
-    def __init__(self, address: tuple[str, int], handler: type[BaseHTTPRequestHandler], requests_root: Path, dist_root: Path):
+    def __init__(self, address: tuple[str, int], handler: type[BaseHTTPRequestHandler], requests_root: Path,
+                 dist_root: Path, agent_launcher: Any = None):
         self.requests_root = Path(requests_root)
         self.dist_root = _validate_dist_root(dist_root)
+        self.agent_launcher = agent_launcher
+        self._agent_lock = threading.Lock()
+        self._runs: dict[str, dict[str, Any]] = {}
+        self._run_by_request: dict[str, str] = {}
         super().__init__(address, handler)
+
+    def _request_dir(self, request_id: str) -> Path:
+        if REQUEST_ID_PATTERN.fullmatch(request_id) is None:
+            raise ValueError("Invalid request_id")
+        root = _validate_requests_root(self.requests_root)
+        if not root.exists():
+            raise FileNotFoundError(request_id)
+        root = root.resolve(strict=True)
+        request_dir = root / request_id
+        if _is_reparse_point(request_dir):
+            raise ValueError("Request directory cannot be a symlink or junction")
+        resolved = request_dir.resolve(strict=True)
+        resolved.relative_to(root)
+        if not resolved.is_dir():
+            raise FileNotFoundError(request_id)
+        for name in ("site-request.json", "site-config.json"):
+            candidate = resolved / name
+            if _is_reparse_point(candidate) or not candidate.is_file():
+                raise ValueError(f"Immutable request is missing {name}")
+        request_value = json.loads((resolved / "site-request.json").read_text(encoding="utf-8"))
+        config_value = json.loads((resolved / "site-config.json").read_text(encoding="utf-8"))
+        _schema_error(REQUEST_VALIDATOR, request_value, "site-request")
+        _schema_error(SITE_CONFIG_VALIDATOR, config_value, "site-config")
+        if request_value.get("request_id") != request_id:
+            raise ValueError("request_id does not match immutable request")
+        if config_value.get("intake", {}).get("request_id") != request_id:
+            raise ValueError("request_id does not match site-config")
+        return resolved
+
+    def start_agent(self, request_id: str) -> dict[str, Any]:
+        if self.agent_launcher is None:
+            raise AgentNotConfigured("Agent 未配置：请设置 SITE_AGENT_COMMAND_JSON 并重启 Intake")
+        request_dir = self._request_dir(request_id)
+        with self._agent_lock:
+            existing = self._run_by_request.get(request_id)
+            if existing:
+                raise AgentRunConflict(existing)
+            record = self.agent_launcher.start(request_id, request_dir)
+            run_id = record.get("run_id")
+            if not isinstance(run_id, str) or RUN_ID_PATTERN.fullmatch(run_id) is None:
+                raise AgentLaunchError("Agent launcher returned an invalid run_id")
+            self._runs[run_id] = deepcopy(record)
+            self._run_by_request[request_id] = run_id
+            return deepcopy(record)
+
+    def agent_status(self, run_id: str) -> dict[str, Any] | None:
+        if RUN_ID_PATTERN.fullmatch(run_id) is None:
+            return None
+        if self.agent_launcher is not None and hasattr(self.agent_launcher, "status"):
+            record = self.agent_launcher.status(run_id)
+            if record is not None:
+                with self._agent_lock:
+                    self._runs[run_id] = deepcopy(record)
+                return record
+        with self._agent_lock:
+            record = self._runs.get(run_id)
+            return deepcopy(record) if record is not None else None
 
 
 class IntakeHandler(BaseHTTPRequestHandler):
@@ -863,6 +1045,14 @@ class IntakeHandler(BaseHTTPRequestHandler):
                 "version": SERVICE_VERSION,
             })
             return
+        if raw_path.startswith("/api/runs/"):
+            run_id = unquote(raw_path.removeprefix("/api/runs/"), errors="strict")
+            record = self.server.agent_status(run_id)
+            if record is None:
+                self._send_json(404, {"error": "run_not_found"})
+            else:
+                self._send_json(200, record)
+            return
         try:
             decoded = unquote(raw_path, errors="strict")
             if decoded in ("/", "/index.html"):
@@ -893,7 +1083,8 @@ class IntakeHandler(BaseHTTPRequestHandler):
         self._send_static(self.server.dist_root / relative, content_type)
 
     def do_POST(self) -> None:
-        if self.path != "/api/requests":
+        raw_path = urlsplit(self.path).path
+        if raw_path not in ("/api/requests", "/api/runs"):
             self._send_json(404, {"error": "not_found"})
             return
         origin = self.headers.get("Origin")
@@ -914,10 +1105,40 @@ class IntakeHandler(BaseHTTPRequestHandler):
         except ValueError:
             self._send_json(411, {"error": "content_length_required"})
             return
-        if length < 0 or length > MAX_POST_BYTES:
-            self._send_json(413, {"error": "body_too_large", "max_bytes": MAX_POST_BYTES})
+        max_bytes = MAX_RUN_POST_BYTES if raw_path == "/api/runs" else MAX_POST_BYTES
+        if length < 0 or length > max_bytes:
+            self._send_json(413, {"error": "body_too_large", "max_bytes": max_bytes})
             return
         content_type = self.headers.get("Content-Type", "")
+        if raw_path == "/api/runs":
+            if content_type.split(";", 1)[0].strip().lower() != "application/json":
+                self._send_json(415, {"error": "json_required"})
+                return
+            try:
+                value = json.loads(self.rfile.read(length).decode("utf-8", "strict"))
+                if not isinstance(value, dict) or set(value) != {"request_id"}:
+                    raise ValueError("Exactly request_id is required")
+                request_id = value["request_id"]
+                if not isinstance(request_id, str):
+                    raise ValueError("request_id must be a string")
+                result = self.server.start_agent(request_id)
+            except (UnicodeError, json.JSONDecodeError, ValueError) as error:
+                self._send_json(400, {"error": "invalid_run_request", "message": str(error)})
+                return
+            except FileNotFoundError:
+                self._send_json(404, {"error": "request_not_found"})
+                return
+            except AgentNotConfigured as error:
+                self._send_json(503, {"error": "agent_not_configured", "message": str(error)})
+                return
+            except AgentRunConflict as error:
+                self._send_json(409, {"error": "run_conflict", "run_id": error.run_id})
+                return
+            except AgentLaunchError as error:
+                self._send_json(502, {"error": "agent_launch_failed", "message": str(error)})
+                return
+            self._send_json(202, result)
+            return
         if not content_type.lower().startswith("multipart/form-data;"):
             self._send_json(415, {"error": "multipart_required"})
             return
@@ -947,10 +1168,15 @@ class IntakeHandler(BaseHTTPRequestHandler):
 
 
 def create_server(*, port: int = 4180, requests_root: Path | None = None,
-                  dist_root: Path | None = None) -> IntakeHTTPServer:
+                  dist_root: Path | None = None, agent_launcher: Any = None,
+                  runtime_root: Path | None = None) -> IntakeHTTPServer:
     root = Path(requests_root) if requests_root is not None else INTAKE_ROOT / "requests"
     static_root = Path(dist_root) if dist_root is not None else INTAKE_ROOT / "dist"
-    return IntakeHTTPServer(("127.0.0.1", int(port)), IntakeHandler, root, static_root)
+    state_root = Path(runtime_root) if runtime_root is not None else INTAKE_ROOT / "run-status"
+    launcher = agent_launcher
+    if launcher is None:
+        launcher = CommandAgentLauncher.from_environment(state_root)
+    return IntakeHTTPServer(("127.0.0.1", int(port)), IntakeHandler, root, static_root, launcher)
 
 
 def main() -> None:

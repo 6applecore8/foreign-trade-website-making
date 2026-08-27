@@ -64,6 +64,22 @@ describe("custom FAQ serialization", () => {
 });
 
 describe("request serialization contract", () => {
+  it("serializes only selected element annotations into both Agent contracts", () => {
+    const request = buildRequest({
+      projectId: "marked-site", industry: "零售", siteType: "独立站", brand: "Nova",
+      targetAudience: "消费者", primaryGoal: "销售", requiredSections: "首页",
+      freeformRequest: "制作商品站", faqMode: "industry-default",
+      elementAnnotations: [
+        { element_id: "hero", page_scope: "home", priority: "must", note: "缩短首屏高度", selected: true },
+        { element_id: "footer", page_scope: "global", priority: "optional", note: "", selected: false }
+      ]
+    });
+    expect(request.element_annotations).toEqual([
+      { element_id: "hero", page_scope: "home", priority: "must", note: "缩短首屏高度" }
+    ]);
+    expect(request.website.element_annotations).toEqual(request.element_annotations);
+  });
+
   it("projects canonical intake fields, SEO and reference metadata", () => {
     const request = buildRequest({
       projectName: "品牌官网",

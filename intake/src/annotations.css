@@ -1,0 +1,50 @@
+.annotation-editors {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #d7dde7;
+}
+
+.annotation-editors h3 {
+  margin: 0 0 10px;
+}
+
+.annotation-editor {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 20px;
+  align-items: start;
+  padding: 14px 0;
+  border-top: 1px solid #e5e8ee;
+}
+
+.annotation-editor-title {
+  padding-top: 12px;
+}
+
+.annotation-editor-title strong,
+.annotation-editor-title small {
+  display: block;
+}
+
+.annotation-editor-title small {
+  margin-top: 3px;
+  color: #667085;
+}
+
+.annotation-detail {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 14px;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.annotation-detail label {
+  margin: 0;
+}
+
+.agent-status.error-text {
+  color: #b42318;
+  background: #fff1f0;
+}

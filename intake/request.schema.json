@@ -76,6 +76,47 @@
       "minLength": 1,
       "maxLength": 4000
     },
+    "element_annotations": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["element_id", "page_scope", "priority", "note"],
+        "properties": {
+          "element_id": {
+            "type": "string",
+            "enum": [
+              "header-navigation",
+              "hero",
+              "category-menu",
+              "featured-products",
+              "product-grid",
+              "product-card",
+              "about",
+              "faq",
+              "contact",
+              "footer",
+              "colors-typography",
+              "imagery"
+            ]
+          },
+          "page_scope": {
+            "type": "string",
+            "enum": ["global", "home", "category", "product"]
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["must", "should", "optional"]
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 800
+          }
+        }
+      }
+    },
     "project": {
       "type": "object",
       "additionalProperties": false,
@@ -148,6 +189,38 @@
         "style_notes": {
           "type": "string",
           "maxLength": 1000
+        },
+        "element_annotations": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["element_id", "page_scope", "priority", "note"],
+            "properties": {
+              "element_id": {
+                "type": "string",
+                "enum": [
+                  "header-navigation", "hero", "category-menu", "featured-products",
+                  "product-grid", "product-card", "about", "faq", "contact", "footer",
+                  "colors-typography", "imagery"
+                ]
+              },
+              "page_scope": {
+                "type": "string",
+                "enum": ["global", "home", "category", "product"]
+              },
+              "priority": {
+                "type": "string",
+                "enum": ["must", "should", "optional"]
+              },
+              "note": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 800
+              }
+            }
+          }
         }
       }
     },

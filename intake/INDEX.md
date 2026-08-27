@@ -25,6 +25,19 @@ python server.py --port 4180
 
 成功提交原子发布到 `intake/requests/<request_id>/`。
 
+页面元素批注采用固定元素 ID 白名单。用户可以选择导航、首屏、商品分类、热销产品、商品网格、商品卡片、公司介绍、FAQ、联系、页脚、颜色字体和图片风格，并为每项填写作用页面、优先级与备注。批注会同时保存到 `site-request.json.element_annotations` 和 `site-config.json.website_intent.element_annotations`，不会变成 CSS 选择器或可执行指令。
+
+提交成功后页面显示“通知 Agent 开始运行”按钮。后端 `POST /api/runs` 只接受不可变 `request_id`，重新校验请求与配置后，才调用服务端预先配置的 Agent 命令。HTTP 请求不能传命令、参数或路径。
+
+生产 Agent 通过环境变量配置为 JSON 字符串数组，例如：
+
+```text
+set SITE_AGENT_COMMAND_JSON=["hermes","run-intake"]
+python server.py --port 4180
+```
+
+服务端会在固定命令后追加 `--intake-manifest <path>`。Manifest 将上传内容标记为 `untrusted-user-data`，限定只读请求文件与建议写入的 `runs/<run_id>`。未配置命令、不可变请求被篡改、重复启动或启动进程失败时接口会明确失败，绝不返回伪造的 running 状态。运行期 manifest/stdout/stderr 位于被 Git 忽略的 `intake/run-status/`。
+
 ## 测试
 
 ```text
@@ -38,7 +51,7 @@ npm run build
 - `src/`：Vue 3 SFC 与核心 ESM 源码；`src/main.js` 是入口。
 - `tests/`：Vitest/jsdom 前端合同与 Python HTTP/安全合同。
 - `dist/`：Vite 生成物，由 `npm run build` 整体重建，不手工维护业务代码。
-- `server.py`：生产静态分发、multipart 校验、安全上传与不可变原子发布。
+- `server.py`：生产静态分发、multipart 校验、安全上传、不可变原子发布，以及只接受服务端命令配置的 Agent 启动桥接。
 - `request.schema.json`：权威请求 schema。
 - `node_modules/`：本地依赖缓存，不是交付物，也不应被文档或生产服务引用。
 

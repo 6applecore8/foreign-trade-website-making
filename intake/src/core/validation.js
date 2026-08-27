@@ -46,5 +46,13 @@ export function validateForm(current, deps) {
       }
     });
   }
+  (current.elementAnnotations || []).forEach((item) => {
+    if (item.selected && !String(item.note || "").trim()) {
+      errors.push({
+        element: `annotation-note-${item.element_id}`,
+        message: `请为“${item.label}”填写修改备注`
+      });
+    }
+  });
   return errors;
 }

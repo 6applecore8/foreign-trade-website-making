@@ -7,10 +7,24 @@ import SuccessReceipt from "./components/SuccessReceipt.vue";
 import { buildRequest, draftSnapshot } from "./core/request.js";
 import { validateForm } from "./core/validation.js";
 import { loadDraft, saveDraft, clearDraft } from "./core/storage.js";
-import { submitRequest } from "./core/api.js";
+import { submitRequest, startAgent } from "./core/api.js";
 
 const DRAFT_KEY = "site-intake-draft-v1";
 const MAX_REFERENCES = 6;
+const ELEMENT_OPTIONS = [
+  ["header-navigation", "顶部导航", "全站菜单、Logo 与操作入口", "global"],
+  ["hero", "首页首屏", "主标题、卖点、CTA 与首屏图片", "home"],
+  ["category-menu", "商品分类", "分类下拉与分类页跳转", "global"],
+  ["featured-products", "热销产品", "首页热销区及多张产品图", "home"],
+  ["product-grid", "商品网格", "分类页列数、间距与图片尺寸", "category"],
+  ["product-card", "商品卡片", "产品标题、介绍、图片与链接", "category"],
+  ["about", "公司介绍", "品牌故事、实力与可信信息", "home"],
+  ["faq", "常见问题", "FAQ 内容、顺序与交互", "home"],
+  ["contact", "联系与询盘", "表单、联系方式与 CTA", "global"],
+  ["footer", "页脚", "链接、版权与政策信息", "global"],
+  ["colors-typography", "颜色与字体", "全站视觉基调和可读性", "global"],
+  ["imagery", "图片风格", "产品图比例、背景与整体风格", "global"]
+];
 
 const form = reactive({
   projectId: "", industry: "", siteType: "", brand: "", targetAudience: "",
@@ -24,6 +38,12 @@ const errors = ref([]);
 const statusText = ref("");
 const submitting = ref(false);
 const result = ref(null);
+const startingAgent = ref(false);
+const agentRun = ref(null);
+const agentError = ref("");
+const elementAnnotations = ref(ELEMENT_OPTIONS.map(([element_id, label, description, page_scope]) => ({
+  element_id, label, description, page_scope, priority: "must", note: "", selected: false
+})));
 let referenceCounter = 0;
 
 const previewText = computed(() => JSON.stringify(buildRequest(currentState()), null, 2));
@@ -42,6 +62,7 @@ function currentState() {
       answer: row.answer,
       order: index
     })),
+    elementAnnotations: elementAnnotations.value.map((item) => ({ ...item })),
     seoFile: seoFile.value
   };
 }
@@ -76,6 +97,8 @@ function removeFaq(index) {
 
 function hideSuccess() {
   result.value = null;
+  agentRun.value = null;
+  agentError.value = "";
 }
 
 function downloadJson() {
@@ -115,6 +138,13 @@ function restore() {
     (draft.customFaq || []).forEach(addFaq);
   }
   (draft.references || []).forEach(addReference);
+  (draft.elementAnnotations || []).forEach((saved) => {
+    const item = elementAnnotations.value.find((candidate) => candidate.element_id === saved.element_id);
+    if (!item) return;
+    item.selected = saved.selected === true;
+    item.priority = ["must", "should", "optional"].includes(saved.priority) ? saved.priority : "must";
+    item.note = typeof saved.note === "string" ? saved.note : "";
+  });
 }
 
 function clearErrors() {
@@ -167,6 +197,19 @@ async function onSubmit(event) {
   }
 }
 
+async function onStartAgent() {
+  if (!result.value || startingAgent.value) return;
+  startingAgent.value = true;
+  agentError.value = "";
+  try {
+    agentRun.value = await startAgent(result.value.request_id);
+  } catch (error) {
+    agentError.value = error.message;
+  } finally {
+    startingAgent.value = false;
+  }
+}
+
 restore();
 changed();
 </script>
@@ -179,7 +222,7 @@ changed();
       <p>桌面端网站需求采集与本地不可变发布</p>
     </header>
     <ErrorSummary :errors="errors" />
-    <form id="intake-form" novalidate @submit="onSubmit">
+    <form id="intake-form" novalidate @submit="onSubmit" @input="changed">
       <section>
         <h2>项目合同</h2>
         <div class="grid">
@@ -192,6 +235,65 @@ changed();
         </div>
         <label>必需栏目（每行一项）*<textarea id="required_sections" name="required_sections" v-model="form.requiredSections" required></textarea></label>
         <label>自由需求 *<textarea id="freeform_request" name="freeform_request" v-model="form.freeformRequest" required></textarea></label>
+      </section>
+
+      <section id="element-annotations">
+        <div class="section-title annotation-heading">
+          <div>
+            <h2>页面元素选择与批注</h2>
+            <p>勾选希望调整的区域，并写清改动。选中的备注会作为结构化需求交给 Agent。</p>
+          </div>
+          <span class="selection-count">已选择 {{ elementAnnotations.filter((item) => item.selected).length }} 项</span>
+        </div>
+        <div class="annotation-grid">
+          <article
+            v-for="item in elementAnnotations"
+            :key="item.element_id"
+            class="annotation-card"
+            :class="{ selected: item.selected }"
+          >
+            <label class="annotation-toggle">
+              <input
+                :id="`annotation-${item.element_id}`"
+                type="checkbox"
+                v-model="item.selected"
+                @change="changed"
+              >
+              <span><strong>{{ item.label }}</strong><small>{{ item.description }}</small></span>
+            </label>
+          </article>
+        </div>
+        <div v-if="elementAnnotations.some((item) => item.selected)" class="annotation-editors">
+          <h3>已选元素的修改备注</h3>
+          <article
+            v-for="item in elementAnnotations.filter((candidate) => candidate.selected)"
+            :key="`editor-${item.element_id}`"
+            class="annotation-editor"
+          >
+            <div class="annotation-editor-title">
+              <strong>{{ item.label }}</strong>
+              <small>{{ item.description }}</small>
+            </div>
+            <div class="annotation-detail">
+              <label>优先级
+                <select v-model="item.priority" @change="changed">
+                  <option value="must">必须实现</option>
+                  <option value="should">应当实现</option>
+                  <option value="optional">可选优化</option>
+                </select>
+              </label>
+              <label>修改备注 *
+                <textarea
+                  :id="`annotation-note-${item.element_id}`"
+                  v-model="item.note"
+                  maxlength="800"
+                  placeholder="例如：桌面端商品区一行展示 5 个，图片不要过大。"
+                  @input="changed"
+                ></textarea>
+              </label>
+            </div>
+          </article>
+        </div>
       </section>
 
       <section>
@@ -256,6 +358,13 @@ changed();
         <span id="status" role="status">{{ statusText }}</span>
       </div>
     </form>
-    <SuccessReceipt v-if="result" :result="result" />
+    <SuccessReceipt
+      v-if="result"
+      :result="result"
+      :starting-agent="startingAgent"
+      :agent-run="agentRun"
+      :agent-error="agentError"
+      @start-agent="onStartAgent"
+    />
   </main>
 </template>

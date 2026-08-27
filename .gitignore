@@ -6,6 +6,7 @@ __pycache__/
 # Test and local runtime state
 intake/tests/.tmp/
 intake/requests/
+intake/run-status/
 rag-data/
 .env
 

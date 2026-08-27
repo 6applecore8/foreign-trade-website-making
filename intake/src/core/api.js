@@ -16,3 +16,23 @@ export async function submitRequest(payload, references, seoFile) {
   }
   return result;
 }
+
+export async function startAgent(requestId) {
+  const response = await fetch("/api/runs", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ request_id: requestId })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.message || result.error || "Agent 启动失败");
+  }
+  return result;
+}
+
+export async function getAgentRun(runId) {
+  const response = await fetch(`/api/runs/${encodeURIComponent(runId)}`);
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.message || result.error || "无法读取 Agent 状态");
+  return result;
+}

@@ -82,6 +82,14 @@ export function buildRequest(state) {
   const brand = clean(source.brand || source.businessName);
   const requiredSections = splitLines(source.requiredSections || source.pages);
   const freeformRequest = clean(source.freeformRequest || source.websiteRequirements);
+  const elementAnnotations = (Array.isArray(source.elementAnnotations) ? source.elementAnnotations : [])
+    .filter((item) => item && item.selected)
+    .map((item) => ({
+      element_id: clean(item.element_id),
+      page_scope: clean(item.page_scope),
+      priority: clean(item.priority),
+      note: clean(item.note)
+    }));
   return {
     schema_version: "1.0",
     project_id: projectId,
@@ -92,6 +100,7 @@ export function buildRequest(state) {
     primary_goal: clean(source.primaryGoal),
     required_sections: requiredSections,
     freeform_request: freeformRequest,
+    element_annotations: elementAnnotations,
     project: { name: clean(source.projectName || source.projectId) },
     business: {
       name: clean(source.businessName || source.brand),
@@ -103,7 +112,8 @@ export function buildRequest(state) {
       primary_goal: clean(source.primaryGoal),
       requirements: clean(source.websiteRequirements || source.freeformRequest),
       pages: splitLines(source.pages || source.requiredSections),
-      style_notes: clean(source.styleNotes)
+      style_notes: clean(source.styleNotes),
+      element_annotations: elementAnnotations
     },
     faq: { mode: source.faqMode === "custom" ? "custom" : "industry-default", items },
     seo: {

@@ -4,6 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from orchestrator.browser import PlaywrightBrowserEvidenceCollector
 from orchestrator.validators import BrowserEvidenceValidator
 
 
@@ -22,3 +23,23 @@ class BrowserEvidenceTests(unittest.TestCase):
             root=Path(tmp); path=root/"evidence.json"; path.write_text(json.dumps(self.evidence(root,True)),encoding="utf-8")
             result=BrowserEvidenceValidator().validate(path)
             self.assertEqual("failed",result["status"]); self.assertTrue(any("overlap" in error for error in result["errors"]))
+
+    def test_real_system_browser_collects_desktop_evidence_without_overflow(self):
+        project_root = Path(__file__).resolve().parents[2]
+        collector = PlaywrightBrowserEvidenceCollector(project_root)
+        try:
+            collector.preflight()
+        except RuntimeError as error:
+            self.skipTest(str(error))
+        with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parent) as tmp:
+            output = Path(tmp)
+            evidence = output / "browser-evidence.json"
+            screenshot = output / "desktop-1440x900.png"
+            receipt = collector.collect(project_root / "artifacts/04-implementation/site", evidence, screenshot)
+            self.assertEqual("success", receipt.status, receipt.detail)
+            value = json.loads(evidence.read_text("utf-8"))
+            self.assertEqual({"width": 1440, "height": 900}, value["viewport"])
+            self.assertFalse(value["overflow"])
+            self.assertEqual([], value["console_errors"])
+            validation = BrowserEvidenceValidator().validate(evidence)
+            self.assertEqual("passed", validation["status"], validation)

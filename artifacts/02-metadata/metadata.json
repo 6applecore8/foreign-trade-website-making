@@ -1,17 +1,25 @@
 {
   "node_id": "02-metadata",
   "status": "success",
-  "title": "NOVA STEP｜鞋服独立站",
-  "description": "以都市运动与日常穿搭为灵感的鞋服概念独立站，展示鞋履、服装与系列搭配。",
-  "keywords": [
-    "鞋服独立站",
-    "运动鞋",
-    "潮流服饰",
-    "都市穿搭",
-    "鞋履品牌"
-  ],
+  "title": "NOVA STEP｜城市通勤鞋服与简洁穿搭",
+  "description": "NOVA STEP 鞋服零售品牌独立站，面向关注城市通勤、舒适度与简洁穿搭的用户，展示热销产品，并提供鞋履、服装与穿搭分类浏览。",
+  "keywords": [],
   "html_head": {
     "lang": "zh-CN"
+  },
+  "provenance": {
+    "title": {
+      "source": "generated-default",
+      "source_document": null
+    },
+    "description": {
+      "source": "generated-default",
+      "source_document": null
+    },
+    "keywords": {
+      "source": "explicit-nested",
+      "source_document": null
+    }
   },
   "errors": []
 }

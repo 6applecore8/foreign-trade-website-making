@@ -88,9 +88,12 @@
       "prompt_version": "2.0.0",
       "reads": [
         "config/site-config.json",
+        "config/site-config.schema.json",
         "artifacts/01-requirements/requirements.json",
         "artifacts/02-metadata/metadata.json",
         "artifacts/03-content/home-content.json",
+        "runs/<run_id>/artifacts/browser-evidence.json",
+        "runs/<run_id>/artifacts/desktop-1440x900.png",
         "artifacts/04-implementation/site/"
       ],
       "writes": [

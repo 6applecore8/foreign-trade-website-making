@@ -89,8 +89,8 @@
 
 ## FAQ 保序与研究声明
 
-- `faq.mode == "custom"`：逐项使用 `faq.items`，严格保持数组顺序；不得排序、去重或改写问题。空/未知答案只能输出 `待补充`。
-- `faq.mode == "industry-default"`：必须读取 `website_intent.industry`，并用其原值从**离线行业通用模板**中选择该行业的常见主题；这只是离线模板选择，**不是同行/竞品研究，也不是市场、行业调查或外部研究**，不得声称或暗示做过这些研究。所有未知业务答案写 `待补充`，不得因行业主题生成企业事实；若 legacy config 未提供 `website_intent.industry`，不得从品牌名或参考图猜测行业，只能使用跨行业通用主题并保留 `待补充` 边界。
+- 无论 `faq.mode` 是 `custom` 还是 `industry-default`，`config/site-config.json` 中已经固化的 `faq.items` 都是本次运行的唯一权威 FAQ 数据。逐项原样使用问题与答案，严格保持数组顺序；不得排序、去重、改写或再次生成行业问题。空/未知答案只能输出 `待补充`。
+- `faq.mode == "industry-default"` 仅表示这些项目由 Intake 的离线行业模板选择并已写入不可变 config，**不是同行/竞品研究，也不是市场、行业调查或外部研究**，不得声称或暗示做过这些研究；不得因行业主题生成企业事实。
 - `website_intent.brand_name` 与 `website_intent.site_type`（若存在）只用于约束称谓、语气和四页面内容范围；不得据此补写真实品牌历史、成立年份、资质、奖项、客户、规模或业绩，也不得由 `site_type` 扩大声明页面范围。
-- FAQ 只有在 requirements 的声明区块中出现时才渲染；仍受 `sections <= 4` 与 `items <= 3` 的 MVP 上限约束。若自定义 FAQ 超过可渲染上限，不得静默丢弃或重排，返回 contract violation 让上游缩减。
+- FAQ 只有在 requirements 的声明区块中出现时才渲染；最多接受 Intake Schema 允许的 5 项。超过上限时不得静默丢弃或重排，返回 contract violation。
 - 将 FAQ item 输出为保持顺序的 `{question, answer}` 数据；不得用生成内容替换用户答案。

@@ -1185,7 +1185,19 @@ def main() -> None:
     parser.add_argument("--port", type=int, default=4180)
     parser.add_argument("--requests-root", type=Path, default=INTAKE_ROOT / "requests")
     args = parser.parse_args()
-    httpd = create_server(port=args.port, requests_root=args.requests_root)
+    runtime_root = INTAKE_ROOT / "run-status"
+    launcher = CommandAgentLauncher.from_environment(runtime_root)
+    if launcher is None:
+        launcher = CommandAgentLauncher(
+            [sys.executable, str(PROJECT_ROOT / "scripts/run_intake_workflow.py")],
+            runtime_root,
+        )
+    httpd = create_server(
+        port=args.port,
+        requests_root=args.requests_root,
+        agent_launcher=launcher,
+        runtime_root=runtime_root,
+    )
     print(f"Site Intake listening on http://127.0.0.1:{httpd.server_port}", flush=True)
     try:
         httpd.serve_forever()

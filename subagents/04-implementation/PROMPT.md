@@ -40,15 +40,18 @@
 ## 必须满足
 
 1. `index.html` 的 `<html lang>` 取 `metadata.html_head.lang`。
-2. `<title>`、`<meta name="description">`、`<meta name="keywords">` 必须来自 `metadata.json`，一字不改。
+2. 四个 HTML 页面都必须各自且仅包含一个 `<title>`、`<meta name="description">`、`<meta name="keywords">`；三项内容在四页中都必须与 `metadata.json` 一字不改，不允许分类页改写 title 或省略 description/keywords。
 3. `index.html` 必须通过 `<link rel="stylesheet" href="styles.css">` 引用 `styles.css`。
 4. 首页必须包含 hero（含 CTA）、需求中所有首页区块和 footer；三个分类入口必须跳转到独立 HTML 页面。每个分类页必须一行展示恰好 5 个带图片、标题与介绍的商品卡，并提供返回首页及分类切换。
 5. 只允许原生 HTML/CSS；禁止任何外部资源。
 6. 所有文案必须来自 `home-content.json`；`待补充` 字段在页面上显示为“待补充”占位文字，不得编造真实内容。
+   - `hero.headline`、`hero.summary`、`hero.cta_label`，每个 `sections[].heading/body`，以及每个 `catalogs[].name/summary/items[].title/description` 的非空值都必须在对应页面逐字出现，不得摘要、同义改写或漏项。
+   - FAQ 必须逐项呈现 `config.faq.items` 与 content 中的权威问题/答案，保持原顺序；相同的 `待补充` 也要在每个问题下分别渲染。
+   - 每个分类商品使用 `<article>`，class 至少包含 `product-card` 或 `catalog-card`，供确定性验证按语义计数。
 7. `site-spec.json` 必须包含：本次使用的 `metadata`、`content_source`、`files` 清单、生成时间戳。
 8. 桌面标题必须使用受控断行；不得依赖浏览器对中英文混排标题自动逐字换行。标题行高不得小于字号的 0.95 倍，所有标题行盒不得重叠或越出父容器。
-9. 首次交付前必须在至少 1440×900 的真实浏览器视口检查横向溢出、标题行盒、图片裁切、CTA 和控制台错误；没有浏览器证据不得宣告成功。
-8. 网站必须能通过 `python -m http.server 4173 --directory artifacts/04-implementation/site` 直接运行。
+9. 实现节点不得启动浏览器或把浏览器能力当作自身成功条件。完成 12 个声明文件并做静态结构自检后即可返回成功；Runner 会在接收文件后，以至少 1440×900 的真实浏览器独立检查横向溢出、标题行盒、图片裁切、CTA 和控制台错误，并在失败时阻止验证节点继续。
+10. 网站必须能通过 `python -m http.server 4173 --directory artifacts/04-implementation/site` 直接运行。
 
 ## 权限边界
 

@@ -12,6 +12,7 @@
 ## 输入（只读）
 
 - `config/site-config.json`
+- `config/site-config.schema.json`
 - `artifacts/01-requirements/requirements.json`
 - `artifacts/02-metadata/metadata.json`
 - `artifacts/03-content/home-content.json`
@@ -27,6 +28,8 @@
 - `artifacts/04-implementation/site/catalog-shoes.png`
 - `artifacts/04-implementation/site/catalog-apparel.png`
 - `artifacts/04-implementation/site/catalog-looks.png`
+- `runs/<run_id>/artifacts/browser-evidence.json`
+- `runs/<run_id>/artifacts/desktop-1440x900.png`
 
 输入缺失时直接返回 `failed` 并说明缺失项。
 
@@ -77,7 +80,7 @@
 
 - 禁止修改、删除、重建任何输入文件（含发现错误时）。
 - 禁止执行主观设计评价、美学评审或性能分析。
-- 禁止执行终端命令、启动服务器。
+- 允许使用只读终端命令读取 allowlist 文件、计算哈希和检查静态结构，并允许写入唯一声明的 `validation-report.json`；禁止启动服务器、浏览器或执行会修改输入/系统状态的命令。
 - 禁止报告未实际验证的通过项；`passed` 只代表静态 MVP 检查通过，不表示部署成功。
 
 ## 验收标准

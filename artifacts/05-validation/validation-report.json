@@ -5,60 +5,59 @@
     {
       "name": "实现文件存在",
       "status": "passed",
-      "detail": "site/ 下恰好存在 4 个 HTML、styles.css、site-spec.json 与 6 张本地图片，共 12 个声明文件。"
-    },
-    {
-      "name": "Schema",
-      "status": "passed",
-      "detail": "config/site-config.json 通过 config/site-config.schema.json 的 Draft 2020-12 校验。"
+      "detail": "artifacts/04-implementation/site 实际文件与 site-spec.json 声明一致，恰好包含 4 个 HTML、1 个 CSS、1 个 site-spec.json 和 6 张 PNG，共 12 个文件。"
     },
     {
       "name": "HTML metadata 一致",
       "status": "passed",
-      "detail": "首页 metadata 与 artifacts/02-metadata/metadata.json 完全一致；三个分类页具有各自的 title、description 与 keywords。"
+      "detail": "artifacts/04-implementation/site/{index,shoes,apparel,looks}.html 均各含唯一 title、description、keywords，内容与 artifacts/02-metadata/metadata.json 完全一致；keywords 为空列表，对应 HTML content 为空，不含逗号空格。"
     },
     {
-      "name": "本地引用与外部依赖",
+      "name": "样式表引用有效",
       "status": "passed",
-      "detail": "四个页面的 HTML/CSS/图片引用均有效，不存在远程 URL、CDN 或脚本依赖。"
+      "detail": "四个 HTML 均通过相对路径 styles.css 引用 artifacts/04-implementation/site/styles.css，目标文件存在。"
     },
     {
-      "name": "四页面与商品数据",
+      "name": "无失效本地引用",
       "status": "passed",
-      "detail": "index.html、shoes.html、apparel.html、looks.html 均存在；三个分类页分别与 home-content.json 的 catalog 标题、介绍和 5 个商品完全匹配。"
+      "detail": "已核对四个 HTML 的 href/src；页面、styles.css、6 张本地 PNG 及 index.html 内 #featured-products、#about、#faq、#contact 锚点均存在。"
     },
     {
-      "name": "分类反例",
+      "name": "无外部依赖",
       "status": "passed",
-      "detail": "自动测试确认任一分类页删减为 4 个商品时，确定性验证会失败。"
+      "detail": "artifacts/04-implementation/site 的 HTML/CSS 未发现 http(s) URL、CDN、外链 script 或 npm/React/Vue 痕迹。"
+    },
+    {
+      "name": "四页面范围、分类商品与 CTA",
+      "status": "passed",
+      "detail": "页面范围仅为 index.html、shoes.html、apparel.html、looks.html；首页 CTA 指向现有 #contact；下拉菜单链接三个分类页；每个分类页恰好 5 个商品卡，且每卡均有本地图片、标题和介绍。"
+    },
+    {
+      "name": "桌面浏览器布局",
+      "status": "passed",
+      "detail": "runs/run-20260829-implementation-final/artifacts/browser-evidence.json 记录 1440x900 视口、scroll_width=client_width=1440、overflow=false、console_errors=[]；全部 h1/h2 行盒位于父容器内且互不重叠。截图文件 SHA-256 为 5abe850ab12f3400fbe83f7fc4886a0a04907dd20b3358250694984238aa5f5f，与证据一致。"
+    },
+    {
+      "name": "Schema",
+      "status": "passed",
+      "detail": "config/site-config.json 符合 config/site-config.schema.json：顶层及 nested 字段均在许可范围，project_name、intake 路径格式、枚举和字段上限有效；reference_assets 为 0 项，未超过 6 项。"
+    },
+    {
+      "name": "本地引用用途",
+      "status": "passed",
+      "detail": "config/site-config.json 的 reference_assets 为空，artifacts/04-implementation/site/site-spec.json 也按相同顺序记录空列表；不存在需核验的声明资产、用途、used 或 placement，也未虚报引用资产已使用。"
     },
     {
       "name": "FAQ 保真",
       "status": "passed",
-      "detail": "3 组问题与答案按 config/site-config.json 顺序呈现，且第三项明确说明三个独立分类页面。"
+      "detail": "config/site-config.json 使用 industry-default；5 个问题在 artifacts/03-content/home-content.json 与 artifacts/04-implementation/site/index.html 中保持原顺序，答案均为“待补充”，页面明确标注为行业通用主题；允许范围内的页面与 artifacts 未发现无证据的竞品研究、市场调研或行业调查结果声明。"
     },
     {
-      "name": "桌面五列布局",
+      "name": "SEO 来源保真",
       "status": "passed",
-      "detail": "1440×900 下三个分类页均为 5 列，每列约 250px；每页 5 张图片全部加载，标题与介绍均存在。"
-    },
-    {
-      "name": "导航与交互",
-      "status": "passed",
-      "detail": "首页商品分类下拉菜单可导航到 shoes.html；分类页下拉菜单可继续切换 apparel.html 与 looks.html，并提供返回首页入口。"
-    },
-    {
-      "name": "浏览器布局证据",
-      "status": "passed",
-      "detail": "document scrollWidth=clientWidth=1425；无横向溢出；标题未越出容器；控制台错误与警告为空。"
-    },
-    {
-      "name": "截图证据",
-      "status": "passed",
-      "detail": "runs/nova-category-pages-desktop-20260826/artifacts/looks-five-column-1440x900.png；SHA-256 3e588c3f8750ee48e8697437ab7516ef4b8399fa7dd451d26479197c4aa46c5c。"
+      "detail": "按字段优先级重算：config/site-config.json 的 nested seo.keywords=[] 为 explicit-nested；未声明 source_document，且无显式 nested/legacy title、description，因此二者使用 generated-default。结果与 artifacts/02-metadata/metadata.json、site-spec.json provenance 及四个 HTML 完全一致。"
     }
   ],
   "errors": [],
-  "site_dir": "artifacts/04-implementation/site",
-  "browser_evidence": "runs/nova-category-pages-desktop-20260826/artifacts/browser-evidence.json"
+  "site_dir": "artifacts/04-implementation/site"
 }

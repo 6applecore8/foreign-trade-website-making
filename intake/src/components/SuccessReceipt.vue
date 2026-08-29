@@ -22,11 +22,11 @@ defineEmits(["start-agent"]);
         <p>只会启动上方 request_id 对应的不可变需求，页面输入不能指定命令。</p>
       </div>
       <button id="start-agent" type="button" :disabled="startingAgent || Boolean(agentRun)" @click="$emit('start-agent')">
-        {{ startingAgent ? "正在通知 Agent…" : agentRun ? "Agent 已启动" : "通知 Agent 开始运行" }}
+        {{ startingAgent ? "正在通知 Agent…" : agentRun?.status === "completed" ? "网站制作完成" : agentRun?.status === "failed" ? "网站制作失败" : agentRun ? "Agent 正在制作" : "通知 Agent 开始运行" }}
       </button>
     </div>
-    <p v-if="agentRun" id="agent-run-status" class="agent-status success-text" role="status">
-      已启动 · {{ agentRun.run_id }} · {{ agentRun.status }}
+    <p v-if="agentRun" id="agent-run-status" class="agent-status" :class="agentRun.status === 'failed' ? 'error-text' : 'success-text'" role="status">
+      {{ agentRun.status === "completed" ? "制作完成" : agentRun.status === "failed" ? "制作失败" : "执行引擎运行中" }} · {{ agentRun.run_id }}
     </p>
     <p v-if="agentError" id="agent-run-error" class="agent-status error-text" role="alert">{{ agentError }}</p>
   </section>

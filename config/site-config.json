@@ -1,25 +1,104 @@
 {
-  "project_name": "nova-step-shoe-fashion-demo",
-  "title": "NOVA STEP｜鞋服独立站",
-  "description": "以都市运动与日常穿搭为灵感的鞋服概念独立站，展示鞋履、服装与系列搭配。",
-  "keywords": ["鞋服独立站", "运动鞋", "潮流服饰", "都市穿搭", "鞋履品牌"],
+  "project_name": "nova-step-agent-e2e-after-reset",
   "language": "zh-CN",
-  "user_request": "建立一个鞋服类的本地多页面独立站 MVP，首页包含热销概念产品、公司介绍、常见问题和联系引导；商品分类进入鞋履、服装、穿搭系列独立页面，每页一行展示 5 个带标题与介绍的概念商品。",
-  "website_intent": {
-    "industry": "鞋服",
-    "site_type": "多页面品牌展示独立站",
-    "brand_name": "NOVA STEP",
-    "target_audience": "注重日常舒适与都市风格的消费者",
-    "primary_goal": "展示鞋服系列并帮助访客快速找到感兴趣的产品类别",
-    "requirements": "左上角提供下拉商品分类列表并跳转到鞋履、服装、穿搭系列独立页面；每个分类页一行展示 5 个带小尺寸图片、标题与介绍的概念商品；首页保留热销产品、公司介绍、常见问题和联系板块；不提供真实交易功能。",
-    "sections": ["热销产品介绍", "公司介绍", "常见问题", "联系引导"]
+  "user_request": "桌面端优先。左上角商品分类必须为下拉菜单并跳转至鞋履、服装、穿搭三个独立分类页面。每个分类页一行五个商品，图片尺寸适中，每个商品附标题与简短介绍。首页包含热销产品、公司介绍、常见问题板块；热销区使用多张本地产品图片。完成后必须用真实浏览器检查截图、控制台与横向 overflow。",
+  "intake": {
+    "request_id": "req-20260829T000822Z-da1c951064",
+    "request_path": "intake/requests/req-20260829T000822Z-da1c951064",
+    "source_request": "intake/requests/req-20260829T000822Z-da1c951064/site-request.json",
+    "submitted_at": "2026-08-29T00:08:22.630366Z"
   },
-  "faq": {
-    "mode": "custom",
-    "items": [
-      {"question": "可以直接在网站下单吗？", "answer": "当前为品牌概念展示站，暂不提供购物车、支付或线上下单功能。", "source": "industry-template", "generation_note": "参考鞋服同行帮助中心常见主题生成，仅描述本项目已确认的展示站范围。"},
-      {"question": "产品价格和库存在哪里查看？", "answer": "价格与库存信息尚未提供，页面不会展示或推测未经确认的数据。", "source": "industry-template", "generation_note": "参考鞋服同行帮助中心常见主题生成，不推测任何价格或库存。"},
-      {"question": "如何找到适合自己的系列？", "answer": "可从页面左上角的商品分类下拉菜单进入鞋履、服装或穿搭系列独立页面，每页浏览 5 个概念商品。", "source": "industry-template", "generation_note": "根据本站已实现的多页面商品分类导航生成。"}
+  "website_intent": {
+    "industry": "鞋服零售",
+    "site_type": "品牌独立站",
+    "brand_name": "NOVA STEP",
+    "target_audience": "关注城市通勤、舒适度与简洁穿搭的桌面端用户",
+    "primary_goal": "展示热销鞋服产品并引导用户浏览独立分类页面",
+    "requirements": "桌面端优先。左上角商品分类必须为下拉菜单并跳转至鞋履、服装、穿搭三个独立分类页面。每个分类页一行五个商品，图片尺寸适中，每个商品附标题与简短介绍。首页包含热销产品、公司介绍、常见问题板块；热销区使用多张本地产品图片。完成后必须用真实浏览器检查截图、控制台与横向 overflow。",
+    "sections": [
+      "首页首屏",
+      "热销产品",
+      "公司介绍",
+      "常见问题",
+      "联系与页脚"
+    ],
+    "element_annotations": [
+      {
+        "element_id": "category-menu",
+        "page_scope": "global",
+        "priority": "must",
+        "note": "左上角展示商品分类下拉菜单，三个选项必须跳转到独立分类页面。"
+      },
+      {
+        "element_id": "featured-products",
+        "page_scope": "home",
+        "priority": "must",
+        "note": "首页热销板块展示多张本地产品图片，并提供分类入口。"
+      },
+      {
+        "element_id": "product-grid",
+        "page_scope": "category",
+        "priority": "must",
+        "note": "桌面端每个分类页面一行恰好五个商品卡，间距均匀且不产生横向溢出。"
+      },
+      {
+        "element_id": "product-card",
+        "page_scope": "category",
+        "priority": "must",
+        "note": "图片尺寸适中，每个商品必须包含可读标题和简短介绍。"
+      },
+      {
+        "element_id": "faq",
+        "page_scope": "home",
+        "priority": "must",
+        "note": "首页提供常见问题板块，行业默认答案必须保持待补充，不虚构品牌事实。"
+      },
+      {
+        "element_id": "imagery",
+        "page_scope": "global",
+        "priority": "must",
+        "note": "图片使用统一比例与简洁背景，优先保证五列网格可读性。"
+      }
     ]
-  }
+  },
+  "reference_assets": [],
+  "faq": {
+    "mode": "industry-default",
+    "items": [
+      {
+        "question": "主要提供哪些产品或服务？",
+        "answer": "待补充",
+        "source": "industry-template",
+        "generation_note": "仅为行业常见问题主题；请补充并核实企业实际答案。"
+      },
+      {
+        "question": "服务范围或适用地区有哪些？",
+        "answer": "待补充",
+        "source": "industry-template",
+        "generation_note": "仅为行业常见问题主题；请补充并核实企业实际答案。"
+      },
+      {
+        "question": "如何获取报价或预约咨询？",
+        "answer": "待补充",
+        "source": "industry-template",
+        "generation_note": "仅为行业常见问题主题；请补充并核实企业实际答案。"
+      },
+      {
+        "question": "项目或订单通常如何推进？",
+        "answer": "待补充",
+        "source": "industry-template",
+        "generation_note": "仅为行业常见问题主题；请补充并核实企业实际答案。"
+      },
+      {
+        "question": "售后支持与常见注意事项有哪些？",
+        "answer": "待补充",
+        "source": "industry-template",
+        "generation_note": "仅为行业常见问题主题；请补充并核实企业实际答案。"
+      }
+    ]
+  },
+  "seo": {
+    "keywords": []
+  },
+  "keywords": []
 }

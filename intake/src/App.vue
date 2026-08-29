@@ -7,7 +7,7 @@ import SuccessReceipt from "./components/SuccessReceipt.vue";
 import { buildRequest, draftSnapshot } from "./core/request.js";
 import { validateForm } from "./core/validation.js";
 import { loadDraft, saveDraft, clearDraft } from "./core/storage.js";
-import { submitRequest, startAgent } from "./core/api.js";
+import { submitRequest, startAgent, getAgentRun } from "./core/api.js";
 
 const DRAFT_KEY = "site-intake-draft-v1";
 const MAX_REFERENCES = 6;
@@ -203,6 +203,14 @@ async function onStartAgent() {
   agentError.value = "";
   try {
     agentRun.value = await startAgent(result.value.request_id);
+    const runId = agentRun.value.run_id;
+    while (agentRun.value?.run_id === runId && agentRun.value.status === "running") {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      agentRun.value = await getAgentRun(runId);
+    }
+    if (agentRun.value?.status === "failed") {
+      agentError.value = `Agent 执行失败（退出码 ${agentRun.value.exit_code ?? "未知"}），请查看本次运行日志。`;
+    }
   } catch (error) {
     agentError.value = error.message;
   } finally {

@@ -9,7 +9,7 @@
 - 主 Agent 只负责调度、传递 JSON 和汇总结果。
 - 每个 Subagent 只拥有自己的工作目录，避免互相覆盖文件。
 - 节点之间通过 `artifacts/` 中的 JSON 文件交接，不依赖数据库。
-- 首版只生成 `index.html`、`styles.css` 和 `site-spec.json`。
+- 当前模板生成首页、3 个独立分类页、样式、规格与 6 张本地图片，共 12 个声明文件。
 
 ## 目录约束
 
@@ -87,10 +87,19 @@ Runner 在 implementation 完成后强制调用 `BrowserEvidenceCollector`。未
 python -m unittest discover -s orchestrator/tests -p "test_*.py" -v
 ```
 
-用 Hermes 命令执行工作流（Runner 会把节点 manifest 路径追加到命令末尾）：
+默认用项目内 Codex CLI 执行工作流：
 
 ```text
-python -m orchestrator --run-id demo hermes run-node
+cd intake && npm ci && node_modules\.bin\codex.cmd login
+cd .. && python -m orchestrator --provider codex --run-id demo
+```
+
+Codex 使用非交互 `exec`、结构化收据、临时会话和 workspace-write 沙箱。Hermes 仍是可选 Provider：`python -m orchestrator --provider hermes --run-id demo <hermes-command...>`。
+
+若某个下游节点失败，可创建新运行并复用已存在的上游产物；Runner 会先校验并记录这些产物的 SHA-256，再从指定节点继续，旧运行保持不变：
+
+```text
+python -m orchestrator --provider codex --run-id recovery-001 --start-from implementation
 ```
 
 ## 甲方需求文档 RAG
@@ -112,7 +121,7 @@ python -m rag.cli build-context --project-key client-a --questions-file rag/site
 
 ## 运行约定
 
-Windows 桌面一键打开建站需求采集页面：双击 `C:\Users\HP\Desktop\启动独立站工作流.bat`。版本化的启动逻辑位于 `scripts/start-site-intake.bat`，会启动只绑定 loopback 的 Intake 服务，并打开 `http://127.0.0.1:4180/`。该入口用于填写行业、品牌、参考资料、FAQ、SEO，并选择具体页面元素逐项备注。提交后可点击“通知 Agent 开始运行”；后端只会启动服务端通过 `SITE_AGENT_COMMAND_JSON` 预配置的 Agent 命令，并把不可变请求 manifest 传给它。Agent 未配置时页面明确提示，不会伪造已经运行。该入口不会启动生成后的网站或覆盖 active config。只检查依赖而不启动服务时执行：
+Windows 桌面一键打开建站需求采集页面：双击 `C:\Users\HP\Desktop\启动独立站工作流.bat`。版本化的启动逻辑位于 `scripts/start-site-intake.bat`，会启动只绑定 loopback 的 Intake 服务，并打开 `http://127.0.0.1:4180/`。该入口用于填写行业、品牌、参考资料、FAQ、SEO，并选择具体页面元素逐项备注。提交后可点击“通知 Agent 开始运行”；后端把不可变 request manifest 传给仓库内执行适配器，默认使用 Codex CLI，也可切换 Hermes。适配器只有在 Provider、浏览器、Schema、身份和归档门禁全部通过后才导入 active config；页面持续显示 running/completed/failed，不伪造完成状态。只检查 Intake 服务依赖而不启动时执行：
 
 ```text
 scripts\start-site-intake.bat --check
@@ -138,7 +147,7 @@ python -m http.server 4173 --directory artifacts/04-implementation/site
 
 - 公网部署、域名、HTTPS、云存储。
 - 生成的网站运行时不含登录、业务数据库、支付或后台管理；设计期 RAG 的 PostgreSQL 仅保存甲方需求证据。
-- 图片生成与外部 API 集成。
+- 生成网站在运行时不调用外部图片、字体、CDN 或业务 API；Provider 模型调用只发生在设计执行阶段。
 - 多页面路由和复杂 SPA 架构。
 - 自动反复修复循环。验证失败时只返回明确错误列表。
 ## 不可破坏的运行归档契约
@@ -151,4 +160,4 @@ python -m http.server 4173 --directory artifacts/04-implementation/site
 
 ## Intake 向后兼容字段
 
-Schema 可选支持 `intake`、`website_intent`、`reference_assets`（最多 6）、`faq` 与 `seo`；不提供时沿用现有 config。规范 Intake 的 top-level `industry`/`site_type`/`brand` 在 archive gate verified 后分别保真导入 `website_intent.industry`/`site_type`/`brand_name`，参考图不能作为身份或品牌事实。SEO 按字段采用 `nested explicit > imported source_document > legacy top-level > generated default`。自定义 FAQ 保持顺序，未知答案为 `待补充`；行业默认 FAQ 只是模板，不代表竞品或市场研究。引用资产只能按声明用途使用真实存在的项目相对本地文件，且不增加单页/3 实现文件限制。
+Schema 可选支持 `intake`、`website_intent`、`reference_assets`（最多 6）、`faq` 与 `seo`；不提供时沿用现有 config。规范 Intake 的 top-level `industry`/`site_type`/`brand` 在 archive gate verified 后分别保真导入 `website_intent.industry`/`site_type`/`brand_name`，参考图不能作为身份或品牌事实。SEO 按字段采用 `nested explicit > imported source_document > legacy top-level > generated default`。自定义 FAQ 保持顺序，未知答案为 `待补充`；行业默认 FAQ 只是模板，不代表竞品或市场研究。引用资产只能按声明用途使用真实存在的项目相对本地文件，且不能突破工作流声明的四页面/12 文件限制。

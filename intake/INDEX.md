@@ -29,14 +29,14 @@ python server.py --port 4180
 
 提交成功后页面显示“通知 Agent 开始运行”按钮。后端 `POST /api/runs` 只接受不可变 `request_id`，重新校验请求与配置后，才调用服务端预先配置的 Agent 命令。HTTP 请求不能传命令、参数或路径。
 
-生产 Agent 通过环境变量配置为 JSON 字符串数组，例如：
+生产模式默认调用仓库内 `scripts/run_intake_workflow.py`，该适配器以项目内固定版本的 Codex CLI 为首选 Provider。首次使用前需要完成一次 ChatGPT 登录：
 
 ```text
-set SITE_AGENT_COMMAND_JSON=["hermes","run-intake"]
+intake\node_modules\.bin\codex.cmd login
 python server.py --port 4180
 ```
 
-服务端会在固定命令后追加 `--intake-manifest <path>`。Manifest 将上传内容标记为 `untrusted-user-data`，限定只读请求文件与建议写入的 `runs/<run_id>`。未配置命令、不可变请求被篡改、重复启动或启动进程失败时接口会明确失败，绝不返回伪造的 running 状态。运行期 manifest/stdout/stderr 位于被 Git 忽略的 `intake/run-status/`。
+也可设置 `SITE_AGENT_PROVIDER=hermes` 和服务端 `SITE_NODE_AGENT_COMMAND_JSON` 使用 Hermes 节点执行器；`SITE_AGENT_COMMAND_JSON` 仍可覆盖整个 Intake 启动命令。服务端会在固定命令后追加 `--intake-manifest <path>`。Manifest 将上传内容标记为 `untrusted-user-data`，限定只读请求文件与写入 `runs/<run_id>`。Codex 节点在独立临时目录运行，使用 Windows workspace-write 沙箱，Runner 再校验全仓库哈希、声明产物、真实浏览器证据后复制。不可变请求被篡改、重复启动、Provider 未登录或进程失败时接口会明确失败，绝不返回伪造的完成状态。页面每秒读取运行状态直到完成或失败；运行期 manifest/stdout/stderr 位于被 Git 忽略的 `intake/run-status/`。
 
 ## 测试
 
@@ -53,7 +53,7 @@ npm run build
 - `dist/`：Vite 生成物，由 `npm run build` 整体重建，不手工维护业务代码。
 - `server.py`：生产静态分发、multipart 校验、安全上传、不可变原子发布，以及只接受服务端命令配置的 Agent 启动桥接。
 - `request.schema.json`：权威请求 schema。
-- `node_modules/`：本地依赖缓存，不是交付物，也不应被文档或生产服务引用。
+- `node_modules/`：本地依赖缓存；生产执行所需版本由 `package-lock.json` 固定，部署后通过 `npm ci` 还原。
 
 ## 限制与保证
 
